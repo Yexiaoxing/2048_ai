@@ -36,6 +36,9 @@
     test = {
       exec = "pnpm run test";
     };
+    "test-ci" = {
+      exec = "pnpm run test-ci";
+    };
   };
 
   # https://devenv.sh/tasks/
@@ -46,7 +49,7 @@
 
   # https://devenv.sh/tests/
   enterTest = ''
-    pnpm run test
+    pnpm run test-ci
   '';
 
   # See full reference at https://devenv.sh/reference/options/

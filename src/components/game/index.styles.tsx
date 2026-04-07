@@ -20,7 +20,7 @@ export const RowContainer = styled.div`
     column-gap: 10px;
 `;
 
-export const NewGameRow = styled(RowContainer)`
+export const StretchedRow = styled(RowContainer)`
     flex-direction: column;
     justify-content: stretch;
 `;

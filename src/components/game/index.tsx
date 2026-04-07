@@ -4,8 +4,7 @@ import { Board } from "../board";
 import {
     BoardContainer,
     GameContainer,
-    NewGameRow,
-    RowContainer,
+    StretchedRow,
     StatusRow,
 } from "./index.styles";
 import { Header } from "../header";
@@ -29,23 +28,20 @@ export const Game: React.FC = () => {
                 </BoardContainer>
             </div>
 
-            <StatusRow>
-                <div className={`status ${gameStatus}`}>
-                    {getStatusMessage(gameStatus)}
-                </div>
-            </StatusRow>
-            <NewGameRow>
+            <StatusRow>{getStatusMessage(gameStatus)}</StatusRow>
+
+            <StretchedRow>
                 <Button onClick={resetGame} variant={"outline"}>
                     New Game
                 </Button>
-            </NewGameRow>
+            </StretchedRow>
             <Controls onMove={move} />
 
-            <NewGameRow>
+            <StretchedRow>
                 <Button onClick={resetGame} variant={"success"}>
                     Get AI Suggestion
                 </Button>
-            </NewGameRow>
+            </StretchedRow>
         </GameContainer>
     );
 };

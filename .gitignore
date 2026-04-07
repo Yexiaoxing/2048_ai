@@ -16,3 +16,7 @@ node_modules
 storybook-static
 
 REQUIREMENTS.md
+
+# dist
+dist/
+coverage/
