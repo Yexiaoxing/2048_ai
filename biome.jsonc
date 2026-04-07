@@ -1,0 +1,38 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
+    "files": {
+        "includes": [
+            "src/**/*.ts",
+            "test/**/*.ts",
+            "!**/*.min.js",
+            ".storybook/**/*.ts",
+            "vite.config.ts"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4
+    },
+    "javascript": {
+        "formatter": {
+            "lineWidth": 100
+        }
+    },
+    "linter": {
+        "enabled": true
+    },
+    "assist": {
+        "enabled": true,
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    }
+}

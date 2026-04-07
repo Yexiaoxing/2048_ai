@@ -1,9 +1,6 @@
 { pkgs, lib, config, inputs, ... }:
 
 {
-  # https://devenv.sh/basics/
-  env.GREET = "devenv";
-
   # https://devenv.sh/packages/
   packages = [ pkgs.git ];
 
@@ -33,6 +30,9 @@
     sb = {
       exec = "pnpm run storybook";
     };
+    lint = {
+      exec = "pnpm run lint";
+    };
   };
 
   # https://devenv.sh/tasks/
@@ -43,11 +43,8 @@
 
   # https://devenv.sh/tests/
   enterTest = ''
-    yarn test
+    pnpm run test
   '';
-
-  # https://devenv.sh/git-hooks/
-  # git-hooks.hooks.shellcheck.enable = true;
 
   # See full reference at https://devenv.sh/reference/options/
 }
