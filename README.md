@@ -15,6 +15,8 @@ Frontend:
 - React 19
 - TypeScript 6
 - Vite
+- styled-components
+- Component styles from <https://shadcn-css.com/>
 
 Development Tools:
 

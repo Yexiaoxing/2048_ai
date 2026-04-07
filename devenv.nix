@@ -33,6 +33,9 @@
     lint = {
       exec = "pnpm run lint";
     };
+    test = {
+      exec = "pnpm run test";
+    };
   };
 
   # https://devenv.sh/tasks/
