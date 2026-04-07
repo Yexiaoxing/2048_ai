@@ -1,0 +1,6 @@
+allowBuilds:
+    esbuild: false
+    msw: true
+
+overrides:
+    postcss: "^8.0.0"

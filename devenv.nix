@@ -12,9 +12,9 @@
   languages.javascript = {
     enable = true;
     corepack.enable = true;
-    yarn.enable = true;
-    yarn.install.enable
-      = true; # Automatically install the correct version of yarn based on the lockfile
+    pnpm.enable = true;
+    pnpm.install.enable
+      = true; # Automatically install the correct version of pnpm based on the lockfile
   };
 
   # https://devenv.sh/processes/
@@ -22,13 +22,16 @@
   
   scripts = {
     dev = {
-      exec = "yarn dev";
+      exec = "pnpm run dev";
     };
     build = {
-      exec = "yarn build";
+      exec = "pnpm run build";
     };
     preview = {
-      exec = "yarn preview";
+      exec = "pnpm run preview";
+    };
+    sb = {
+      exec = "pnpm run storybook";
     };
   };
 
