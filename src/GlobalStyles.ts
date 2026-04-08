@@ -5,6 +5,7 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     background-color: #faf8ef;
+    color: var(--color-foreground);
 
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
 
@@ -27,31 +28,31 @@ export const GlobalStyle = createGlobalStyle`
     --color-160: #DFD6D2;
 
     --radius: 0.625rem;
-    --background: #8c7063;
-    --foreground: #fff;
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.269 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.371 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
     --success: oklch(0.72 0.219 149.579);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --surface: oklch(20% 0 0deg);
-    --surface-foreground: oklch(70.8% 0 0deg);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --surface: oklch(98% 0 0deg);
+    --surface-foreground: var(--foreground);
     --code: var(--surface);
     --code-foreground: var(--surface-foreground);
-    --code-highlight: oklch(27% 0 0deg);
-    --code-number: oklch(72% 0 0deg);
+    --code-highlight: oklch(96% 0 0deg);
+    --code-number: oklch(56% 0 0deg);
 
     --color-red-50: oklch(97.1% 0.013 17.38deg);
     --color-red-100: oklch(93.6% 0.032 17.717deg);
@@ -466,9 +467,13 @@ export const GlobalStyle = createGlobalStyle`
     --color-code-foreground: var(--code-foreground);
     --color-code-highlight: var(--code-highlight);
     --color-code-number: var(--code-number);
+    --color-yellow: var(--color-80);
+    --color-yellow-foreground: var(--primary-foreground);
   }
 
   * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 `;

@@ -3,8 +3,9 @@
     "files": {
         "includes": [
             "src/**/*.ts",
+            "src/**/*.tsx",
             "test/**/*.ts",
-            "!**/*.min.js",
+            "test/**/*.tsx",
             ".storybook/**/*.ts",
             "vite.config.ts"
         ]

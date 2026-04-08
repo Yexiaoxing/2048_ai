@@ -14,16 +14,10 @@ interface IGameControlsProps {
 export const Controls: React.FC<IGameControlsProps> = ({ onMove }) => {
     return (
         <StyledControlsContainer>
-            <LeftControl onClick={() => onMove(Direction.Left)}>
-                Left
-            </LeftControl>
+            <LeftControl onClick={() => onMove(Direction.Left)}>Left</LeftControl>
             <UpControl onClick={() => onMove(Direction.Up)}>Up</UpControl>
-            <DownControl onClick={() => onMove(Direction.Down)}>
-                Down
-            </DownControl>
-            <RightControl onClick={() => onMove(Direction.Right)}>
-                Right
-            </RightControl>
+            <DownControl onClick={() => onMove(Direction.Down)}>Down</DownControl>
+            <RightControl onClick={() => onMove(Direction.Right)}>Right</RightControl>
         </StyledControlsContainer>
     );
 };

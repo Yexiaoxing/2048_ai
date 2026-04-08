@@ -1,22 +1,52 @@
 import type React from "react";
 import { useGame } from "../../hooks/useGame";
+import { useGameAI } from "../../hooks/useGameAI";
+import { useGameKeyboardControl } from "../../hooks/useGameKeyboardControl";
+import { Direction } from "../../shared/game-types";
+import { AiSettingsDialog } from "../ai-settings-dialog";
 import { Board } from "../board";
+import { Controls } from "../controls";
+import { Header } from "../header";
+import { Button } from "../ui/button";
 import {
+    AiActionRow,
+    AiSuggestedMove,
+    AiSuggestionErrorRow,
+    AiSuggestionReasonContainer,
+    AiSuggestionReasonPre,
+    AiSuggestionRow,
     BoardContainer,
     GameContainer,
-    StretchedRow,
     StatusRow,
+    StretchedRow,
 } from "./index.styles";
-import { Header } from "../header";
-import { useGameKeyboardControl } from "../../hooks/useGameKeyboardControl";
-import { Button } from "../ui/button";
 import { getStatusMessage } from "./strings";
-import { Controls } from "../controls";
 
 export const Game: React.FC = () => {
     const { score, moves, board, move, gameStatus, resetGame } = useGame();
 
     useGameKeyboardControl((dir) => move(dir));
+
+    const { queryAI, resetSuggestion, suggestion, suggestionReason, status, error } =
+        useGameAI(board);
+
+    const applyMoveSuggestion = (suggestedMove: string) => {
+        switch (suggestedMove.toLocaleLowerCase()) {
+            case "up":
+                move(Direction.Up);
+                break;
+            case "down":
+                move(Direction.Down);
+                break;
+            case "left":
+                move(Direction.Left);
+                break;
+            case "right":
+                move(Direction.Right);
+                break;
+        }
+        resetSuggestion();
+    };
 
     return (
         <GameContainer>
@@ -31,17 +61,38 @@ export const Game: React.FC = () => {
             <StatusRow>{getStatusMessage(gameStatus)}</StatusRow>
 
             <StretchedRow>
-                <Button onClick={resetGame} variant={"outline"}>
+                <Button onClick={resetGame} variant={"primary"}>
                     New Game
                 </Button>
             </StretchedRow>
             <Controls onMove={move} />
 
-            <StretchedRow>
-                <Button onClick={resetGame} variant={"success"}>
-                    Get AI Suggestion
+            <AiActionRow>
+                <Button onClick={queryAI} variant={"success"} disabled={status === "loading"}>
+                    {status === "loading" ? "Getting AI Suggestion..." : "Get AI Suggestion"}
                 </Button>
-            </StretchedRow>
+                <AiSettingsDialog />
+            </AiActionRow>
+
+            {suggestion && (
+                <AiSuggestionRow>
+                    <p>
+                        AI suggests: <AiSuggestedMove>{suggestion.toUpperCase()}</AiSuggestedMove>
+                    </p>
+                    <AiSuggestionReasonContainer>
+                        <details>
+                            <summary>Reason</summary>
+                            <AiSuggestionReasonPre>{suggestionReason}</AiSuggestionReasonPre>
+                        </details>
+                    </AiSuggestionReasonContainer>
+                    <Button onClick={() => applyMoveSuggestion(suggestion)}>Apply Move</Button>
+                </AiSuggestionRow>
+            )}
+            {error && (
+                <AiSuggestionErrorRow>
+                    <p>Error during querying AI suggestion: {error}</p>
+                </AiSuggestionErrorRow>
+            )}
         </GameContainer>
     );
 };

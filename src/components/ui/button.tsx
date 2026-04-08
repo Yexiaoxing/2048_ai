@@ -42,6 +42,19 @@ const StyledButton = styled(ButtonPrimitive)`
         }
     }
 
+    &[data-variant="yellow"] {
+        background-color: var(--color-yellow);
+        color: var(--color-yellow-foreground);
+
+        &:hover {
+            background-color: color-mix(
+                in oklab,
+                var(--color-yellow) 80%,
+                transparent
+            );
+        }
+    }
+
     &[data-variant="outline"] {
         border-color: var(--color-input);
         background-color: var(--color-background);
@@ -192,6 +205,7 @@ type ButtonProps = React.ComponentProps<typeof StyledButton> & {
     variant?:
         | "primary"
         | "secondary"
+        | "yellow"
         | "outline"
         | "ghost"
         | "destructive"
@@ -200,10 +214,6 @@ type ButtonProps = React.ComponentProps<typeof StyledButton> & {
     size?: "sm" | "md" | "lg" | "icon" | "icon-sm" | "icon-lg";
 };
 
-export function Button({
-    variant = "primary",
-    size = "md",
-    ...props
-}: ButtonProps) {
+export function Button({ variant = "primary", size = "md", ...props }: ButtonProps) {
     return <StyledButton data-size={size} data-variant={variant} {...props} />;
 }

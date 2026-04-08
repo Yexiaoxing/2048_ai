@@ -1,8 +1,6 @@
 import { styled } from "styled-components";
 import { Button } from "../ui/button";
 
-// |    |Up |    |
-// |Left|Down|Right|
 export const StyledControlsContainer = styled.div`
     display: grid;
 
@@ -13,19 +11,19 @@ export const StyledControlsContainer = styled.div`
     gap: 4px;
 `;
 
-export const UpControl = styled(Button).attrs({ variant: "secondary" })`
+export const UpControl = styled(Button).attrs({ variant: "outline" })`
     grid-area: up;
     height: unset !important;
 `;
-export const DownControl = styled(Button).attrs({ variant: "secondary" })`
+export const DownControl = styled(Button).attrs({ variant: "outline" })`
     grid-area: down;
     height: unset !important;
 `;
-export const LeftControl = styled(Button).attrs({ variant: "secondary" })`
+export const LeftControl = styled(Button).attrs({ variant: "outline" })`
     grid-area: left;
     height: unset !important;
 `;
-export const RightControl = styled(Button).attrs({ variant: "secondary" })`
+export const RightControl = styled(Button).attrs({ variant: "outline" })`
     grid-area: right;
     height: unset !important;
 `;

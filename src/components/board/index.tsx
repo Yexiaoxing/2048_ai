@@ -11,6 +11,7 @@ export const Board: React.FC<IBoardProps> = ({ board }) => {
         <StyledBoard>
             {board.map((row, rowIndex) =>
                 row.map((cellValue, cellIndex) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Only available key
                     <Cell key={rowIndex * 4 + cellIndex} value={cellValue} />
                 )),
             )}
