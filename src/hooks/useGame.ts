@@ -8,7 +8,7 @@ export const useGame = () => {
     const [score, setScore] = useState(0);
     const [moves, setMoves] = useState(0);
     const [gameStatus, setGameStatus] = useState(GameStatus.playing);
-    const [board, setBoard] = useState<Board>(getInitialBoard(getRandomInteger(1, 8)));
+    const [board, setBoard] = useState<Board>(() => getInitialBoard(getRandomInteger(1, 8)));
 
     const resetGame = useCallback(() => {
         setScore(0);
