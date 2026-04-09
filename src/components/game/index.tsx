@@ -27,7 +27,7 @@ export const Game: React.FC = () => {
 
     useGameKeyboardControl((dir) => move(dir));
 
-    const { queryAI, resetSuggestion, suggestion, suggestionReason, status, error } =
+    const { queryAI, resetSuggestion, suggestion, suggestionReason, duration, status, error } =
         useGameAI(board);
 
     const applyMoveSuggestion = (suggestedMove: string) => {
@@ -74,6 +74,9 @@ export const Game: React.FC = () => {
                             <summary>Reason</summary>
                             <AiSuggestionReasonPre>{suggestionReason}</AiSuggestionReasonPre>
                         </details>
+                    </AiSuggestionReasonContainer>
+                    <AiSuggestionReasonContainer>
+                        <p>Query duration: {duration} seconds</p>
                     </AiSuggestionReasonContainer>
                     <Button onClick={() => applyMoveSuggestion(suggestion)}>Apply Move</Button>
                 </AiSuggestionRow>

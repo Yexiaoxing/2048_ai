@@ -3,11 +3,13 @@ import { aiConfigStore } from "../shared/game-ai/game-ai-configs";
 import { getAIMove, queryAvailableModels } from "../shared/game-ai/game-ai-local";
 import { getRemoteAIMove } from "../shared/game-ai/game-ai-remote";
 import type { Board } from "../shared/game-types";
+import { logger } from "../utils/logger";
 
 export const useGameAI = (board: Board) => {
     const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
     const [suggestion, setSuggestion] = useState<string>("");
     const [suggestionReason, setSuggestionReason] = useState<string>("");
+    const [duration, setDuration] = useState<number>(0);
     const [error, setError] = useState<string>("");
 
     const queryAI = useCallback(async (): Promise<void> => {
@@ -16,7 +18,10 @@ export const useGameAI = (board: Board) => {
             setSuggestion("");
             setSuggestionReason("");
             setError("");
+            setDuration(0);
             const config = await aiConfigStore.getConfig();
+
+            const start = performance.now();
 
             if (!config || config.aiProvider === "local") {
                 const models = await queryAvailableModels();
@@ -37,6 +42,13 @@ export const useGameAI = (board: Board) => {
                 setSuggestion(move);
                 setSuggestionReason(thinking || "");
             }
+
+            const end = performance.now();
+            const duration = ((end - start) / 1000).toFixed(2);
+            setDuration(Number(duration));
+
+            logger.info(`AI move query took ${duration} seconds.`);
+
             setStatus("idle");
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
@@ -58,6 +70,7 @@ export const useGameAI = (board: Board) => {
         status,
         suggestionReason,
         suggestion,
+        duration,
         resetSuggestion,
     };
 };
