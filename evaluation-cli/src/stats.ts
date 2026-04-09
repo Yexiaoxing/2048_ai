@@ -34,7 +34,7 @@ export function calculateStats(results: GameResult[]) {
 		),
 		winRate: (wins / successful.length) * 100,
 		avgMoves:
-			results.reduce((sum, r) => sum + r.numMoves, 0) / successful.length,
+			successful.reduce((sum, r) => sum + r.numMoves, 0) / successful.length,
 	};
 }
 
