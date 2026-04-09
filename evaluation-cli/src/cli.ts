@@ -1,12 +1,12 @@
 #!/usr/bin/env -S npx tsx
 
+import * as fs from "node:fs";
+import * as path from "node:path";
 import chalk from "chalk";
-import * as fs from "fs";
-import * as path from "path";
 import { type EvaluationConfig, GameEvaluator } from "./evaluator";
 import { createInference, type LLMConfig, type LLMInference } from "./llm";
 import { type GameResult, ResultsLogger } from "./logger";
-import { calculateStats, writeStatsToFile } from "./stats";
+import { calculateStats, type IGameStats, writeStatsToFile } from "./stats";
 import { clearScreen, hideCursor, showCursor, TUIRenderer } from "./tui";
 
 interface CLIConfig {
@@ -103,7 +103,7 @@ async function main() {
 		};
 
 		const evaluator = new GameEvaluator(evaluationConfig);
-		const modelSummary: Record<string, any> = {};
+		const modelSummary: Record<string, IGameStats> = {};
 
 		// --- Evaluate each model ---
 		for (let modelIdx = 0; modelIdx < config.models.length; modelIdx++) {
@@ -200,7 +200,7 @@ async function main() {
 				// Calculate and display stats
 				const stats = calculateStats(runResults);
 
-				if (stats) {
+				if (stats && !("error" in stats)) {
 					modelSummary[modelName] = stats;
 
 					console.log(chalk.cyan("\n📊 Summary Statistics:"));
@@ -250,23 +250,17 @@ async function main() {
 		console.log(chalk.cyan("📈 Overall Results:"));
 		for (const [name, stats] of Object.entries(modelSummary)) {
 			console.log(chalk.bold(`\n  ${name}:`));
-			if ("error" in stats && !("avgScore" in stats)) {
-				console.log(chalk.red(`    ❌ Error: ${(stats as any).error}`));
+			if ("error" in stats) {
+				console.log(chalk.red(`    ❌ Error: ${stats.error}`));
 			} else {
 				console.log(
 					chalk.green(
-						`    ✅ Successful: ${(stats as any).successfulRuns}/${(stats as any).totalRuns}`,
+						`    ✅ Successful: ${stats.successfulRuns}/${stats.totalRuns}`,
 					),
 				);
-				console.log(
-					chalk.gray(`    Score: ${(stats as any).avgScore.toFixed(2)}`),
-				);
-				console.log(
-					chalk.gray(`    Max Tile: ${(stats as any).avgMaxTile.toFixed(2)}`),
-				);
-				console.log(
-					chalk.gray(`    Win Rate: ${(stats as any).winRate.toFixed(1)}%`),
-				);
+				console.log(chalk.gray(`    Score: ${stats.avgScore.toFixed(2)}`));
+				console.log(chalk.gray(`    Max Tile: ${stats.avgMaxTile.toFixed(2)}`));
+				console.log(chalk.gray(`    Win Rate: ${stats.winRate.toFixed(1)}%`));
 			}
 		}
 

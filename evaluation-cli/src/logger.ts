@@ -17,7 +17,7 @@ export interface GameResult {
 	error: string | null;
 }
 
-type CsvRecord = GameResult & Record<string, unknown>;
+type CsvRecord = GameResult;
 
 const FIELDNAMES = [
 	"timestamp",
@@ -62,12 +62,14 @@ export class ResultsLogger {
 
 	private _resultToCsvRow(result: CsvRecord): string {
 		const values = FIELDNAMES.map((field) => {
-			const camelCaseKey = field.includes("_")
-				? field.replace(/_([a-z])/g, (_, letter: string) =>
-						letter.toUpperCase(),
-					)
-				: field.charAt(0).toLowerCase() + field.slice(1);
-			const value = result[field] ?? result[camelCaseKey];
+			const camelCaseKey = (
+				field.includes("_")
+					? field.replace(/_([a-z])/g, (_, letter: string) =>
+							letter.toUpperCase(),
+						)
+					: field.charAt(0).toLowerCase() + field.slice(1)
+			) as keyof CsvRecord;
+			const value = result[field as keyof CsvRecord] ?? result[camelCaseKey];
 
 			if (value === undefined || value === null) {
 				return "";

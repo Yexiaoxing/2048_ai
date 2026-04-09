@@ -33,13 +33,9 @@ export class LLMInference {
 }
 
 export class OllamaInference extends LLMInference {
-	constructor(config: LLMConfig) {
-		super(config);
-	}
-
 	async generate(board: Board): Promise<LLMResponse> {
 		try {
-			const response = await getAIMove(board, this.config.path!);
+			const response = await getAIMove(board, this.config.path || "");
 			const completion = response.move;
 
 			if (completion) {

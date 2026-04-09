@@ -6,15 +6,12 @@ import {
     getInitialBoard,
     isBoardChanged,
     mergeRow,
-    moveBoard,
     moveDown,
     moveLeft,
     moveRight,
     moveUp,
     spawnTile,
-    stringToDirection,
 } from "./game-logic";
-import { Direction } from "./game-types";
 
 describe("Game Logic", () => {
     describe("getInitialBoard", () => {

@@ -40,10 +40,13 @@ describe("calculateStats", () => {
 		const stats = calculateStats(results);
 
 		expect(stats).not.toBeNull();
-		expect(stats?.successfulRuns).toBe(2);
-		expect(stats?.totalRuns).toBe(3);
-		expect(stats?.avgMoves).toBe(15);
-		expect(stats?.avgScore).toBe(150);
-		expect(stats?.avgMaxTile).toBe(96);
+		expect(stats).not.toHaveProperty("error");
+		if (stats && !("error" in stats)) {
+			expect(stats?.successfulRuns).toBe(2);
+			expect(stats?.totalRuns).toBe(3);
+			expect(stats?.avgMoves).toBe(15);
+			expect(stats?.avgScore).toBe(150);
+			expect(stats?.avgMaxTile).toBe(96);
+		}
 	});
 });

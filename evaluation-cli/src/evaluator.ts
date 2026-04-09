@@ -2,7 +2,6 @@ import { stringToDirection } from "../../src/shared/game-logic";
 import { Game2048 } from "./game";
 import type { LLMInference } from "./llm";
 import type { GameResult } from "./logger";
-import { TUIRenderer } from "./tui";
 
 export interface EvaluationConfig {
 	numRuns: number;

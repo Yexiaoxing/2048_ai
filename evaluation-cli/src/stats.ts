@@ -1,8 +1,21 @@
-import fs from "fs";
+import fs from "node:fs";
 
 import type { GameResult } from "./logger";
 
-export function calculateStats(results: GameResult[]) {
+export type IGameStats =
+	| {
+			successfulRuns: number;
+			totalRuns: number;
+			avgScore: number;
+			stdScore: number;
+			avgMaxTile: number;
+			stdMaxTile: number;
+			winRate: number;
+			avgMoves: number;
+	  }
+	| { error: string };
+
+export function calculateStats(results: GameResult[]): IGameStats | null {
 	const successful = results.filter((r) => !r.error);
 
 	if (successful.length === 0) {
