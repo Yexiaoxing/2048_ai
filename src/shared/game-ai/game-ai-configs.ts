@@ -3,7 +3,8 @@ export interface AIConfig {
     aiProvider: "local" | "remote";
     apiEndpoint: string;
     apiSecret: string;
-    selectedModel: string;
+    selectedLocalModel: string;
+    selectedRemoteModel: string;
 }
 
 const DB_NAME = "2048AI";

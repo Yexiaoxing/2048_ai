@@ -1,28 +1,31 @@
 import type { Board } from "../game-types";
 import type { IGameAiResponse } from "./game-ai.types";
-import { aiConfigStore } from "./game-ai-configs";
 import { getGameAIMessages } from "./prompt";
 import { gameAiSchema } from "./schema";
 
-export const getRemoteAIMove = async (board: Board): Promise<IGameAiResponse> => {
-    const aiConfig = await aiConfigStore.getConfig();
-    if (!aiConfig || aiConfig.aiProvider !== "remote") {
-        throw new Error("Remote AI provider is not configured.");
-    }
+interface IRemoteAiConfig {
+    apiEndpoint: string;
+    apiSecret?: string;
+    selectedRemoteModel?: string;
+}
 
-    const requestHeader: HeadersInit = {
+export const getRemoteAIMove = async (
+    board: Board,
+    config: IRemoteAiConfig,
+): Promise<IGameAiResponse> => {
+    const requestHeader: Record<string, string> = {
         "Content-Type": "application/json",
     };
 
-    if (aiConfig.apiSecret) {
-        requestHeader.Authorization = `Bearer ${aiConfig.apiSecret}`;
+    if (config.apiSecret) {
+        requestHeader.Authorization = `Bearer ${config.apiSecret}`;
     }
 
-    const response = await fetch(aiConfig.apiEndpoint, {
+    const response = await fetch(config.apiEndpoint, {
         method: "POST",
         headers: requestHeader,
         body: JSON.stringify({
-            model: aiConfig.selectedModel || "",
+            model: config.selectedRemoteModel || "",
             messages: getGameAIMessages(board),
             response_format: {
                 type: "json_schema",
@@ -35,7 +38,9 @@ export const getRemoteAIMove = async (board: Board): Promise<IGameAiResponse> =>
         }),
     });
 
-    const content = await response.json();
+    const content = (await response.json()) as {
+        choices: { message: { content: string } }[];
+    };
     const parsedAiResponse = gameAiSchema.safeParse(JSON.parse(content.choices[0].message.content));
 
     if (parsedAiResponse.success) {

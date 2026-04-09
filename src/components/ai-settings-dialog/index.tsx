@@ -36,7 +36,8 @@ export const AiSettingsDialog: React.FC = () => {
     const [aiProvider, setAIProvider] = useState<"local" | "remote">("local");
     const [apiEndpoint, setApiEndpoint] = useState("");
     const [apiSecret, setApiSecret] = useState("");
-    const [selectedModel, setSelectedModel] = useState("");
+    const [selectedLocalModel, setSelectedLocalModel] = useState("");
+    const [selectedRemoteModel, setSelectedRemoteModel] = useState("");
     const [availableModels, setAvailableModels] = useState<string[]>([]);
     const [loadingModels, setLoadingModels] = useState(false);
     const [savingConfig, setSavingConfig] = useState(false);
@@ -50,28 +51,29 @@ export const AiSettingsDialog: React.FC = () => {
                 setAIProvider(config.aiProvider);
                 setApiEndpoint(config.apiEndpoint);
                 setApiSecret(config.apiSecret);
-                setSelectedModel(config.selectedModel);
+                setSelectedLocalModel(config.selectedLocalModel);
+                setSelectedRemoteModel(config.selectedRemoteModel);
             }
         } catch (error) {
             console.error("Failed to load AI config:", error);
         }
     }, []);
 
-    const fetchModels = useCallback(async () => {
+    const fetchLocalModels = useCallback(async () => {
         setLoadingModels(true);
         setFetchModelError(null);
         try {
             const models = await queryAvailableModels();
             setAvailableModels(models);
-            if (models.length > 0 && !selectedModel) {
-                setSelectedModel(models[0]);
+            if (models.length > 0 && !selectedLocalModel) {
+                setSelectedLocalModel(models[0]);
             }
         } catch (error) {
             setFetchModelError(`Failed to fetch models: ${(error as Error).message}`);
         } finally {
             setLoadingModels(false);
         }
-    }, [selectedModel]);
+    }, [selectedLocalModel]);
 
     useEffect(() => {
         if (open) {
@@ -81,12 +83,12 @@ export const AiSettingsDialog: React.FC = () => {
 
     useEffect(() => {
         if (aiProvider === "local" && open) {
-            fetchModels();
+            fetchLocalModels();
         }
-    }, [aiProvider, open, fetchModels]);
+    }, [aiProvider, open, fetchLocalModels]);
 
     const refreshOllamaStatus = async () => {
-        await fetchModels();
+        await fetchLocalModels();
     };
 
     const onSave = useCallback(async () => {
@@ -96,7 +98,8 @@ export const AiSettingsDialog: React.FC = () => {
                 aiProvider,
                 apiEndpoint,
                 apiSecret,
-                selectedModel,
+                selectedLocalModel,
+                selectedRemoteModel,
             };
             await aiConfigStore.saveConfig(config);
             setOpen(false);
@@ -105,7 +108,7 @@ export const AiSettingsDialog: React.FC = () => {
         } finally {
             setSavingConfig(false);
         }
-    }, [aiProvider, apiEndpoint, apiSecret, selectedModel]);
+    }, [aiProvider, apiEndpoint, apiSecret, selectedLocalModel, selectedRemoteModel]);
 
     return (
         <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
@@ -171,8 +174,8 @@ export const AiSettingsDialog: React.FC = () => {
                                         id="ai-model"
                                         type="text"
                                         placeholder="Enter the model name"
-                                        value={selectedModel}
-                                        onValueChange={setSelectedModel}
+                                        value={selectedRemoteModel}
+                                        onValueChange={setSelectedRemoteModel}
                                     />
                                     <FieldDescription>E.g. gpt-5.3</FieldDescription>
                                 </Field>
@@ -184,8 +187,8 @@ export const AiSettingsDialog: React.FC = () => {
                                     <FieldLabel htmlFor="ollama-model">Ollama Model</FieldLabel>
                                     <Select
                                         id="ollama-model"
-                                        value={selectedModel}
-                                        onChange={(e) => setSelectedModel(e.target.value)}
+                                        value={selectedLocalModel}
+                                        onChange={(e) => setSelectedLocalModel(e.target.value)}
                                         disabled={loadingModels}
                                     >
                                         {availableModels.map((model) => (

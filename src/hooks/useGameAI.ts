@@ -7,7 +7,7 @@ import type { Board } from "../shared/game-types";
 export const useGameAI = (board: Board) => {
     const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
     const [suggestion, setSuggestion] = useState<string>("");
-    const [suggestionReason, setSuggestionReason] = useState<string | undefined>("");
+    const [suggestionReason, setSuggestionReason] = useState<string | null>("");
     const [error, setError] = useState<string>("");
 
     const queryAI = useCallback(async (): Promise<void> => {
@@ -19,14 +19,15 @@ export const useGameAI = (board: Board) => {
 
             if (!config || config.aiProvider === "local") {
                 const models = await queryAvailableModels();
-                const model = config?.selectedModel || models[0];
+                const model = config?.selectedLocalModel || models[0];
                 const { move, thinking } = await getAIMove(board, model);
                 setSuggestion(move);
-                setSuggestionReason(thinking);
+                setSuggestionReason(thinking || "");
             } else {
-                const { move, thinking } = await getRemoteAIMove(board);
+                const aiConfig = await aiConfigStore.getConfig();
+                const { move, thinking } = await getRemoteAIMove(board, aiConfig!);
                 setSuggestion(move);
-                setSuggestionReason(thinking);
+                setSuggestionReason(thinking || "");
             }
         } catch (error) {
             setStatus("error");
