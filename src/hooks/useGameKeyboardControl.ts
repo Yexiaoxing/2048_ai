@@ -5,6 +5,11 @@ import { Direction } from "../shared/game-types";
 export const useGameKeyboardControl = (move: (direction: Direction) => void) => {
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
+            const debugOverrideContainer = document.querySelector("#debug-board-override");
+            if (debugOverrideContainer?.contains(e.target as Node)) {
+                return; // Don't handle if debug override is open
+            }
+
             const keyMap: Record<string, Direction> = {
                 ArrowUp: Direction.Up,
                 ArrowDown: Direction.Down,

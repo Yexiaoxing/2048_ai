@@ -43,6 +43,11 @@ export const useGame = () => {
         [board],
     );
 
+    const overrideBoard = useCallback((newBoard: Board) => {
+        setBoard(newBoard);
+        setGameStatus(getGameStatus(newBoard));
+    }, []);
+
     return {
         score,
         moves,
@@ -51,5 +56,6 @@ export const useGame = () => {
 
         resetGame,
         move,
+        overrideBoard,
     };
 };

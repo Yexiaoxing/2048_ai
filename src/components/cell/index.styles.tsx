@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CellColors, CellFontSizes, CellTextColors } from "./colors";
+import { CellColors, CellFontSizes, CellTextColors } from "./consts";
 
 export const StyledCell = styled.div<{ $value: number }>`
     background-color: ${(props) => CellColors[props.$value] ?? CellColors[2048]};

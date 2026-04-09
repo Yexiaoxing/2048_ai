@@ -7,6 +7,8 @@ export const GameContainer = styled.div`
     flex-direction: column;
     align-items: stretch;
     row-gap: 16px;
+
+    padding: 32px 0;
 `;
 
 export const BoardContainer = styled.div`
@@ -52,7 +54,7 @@ export const AiSuggestionRow = styled.div`
 
 export const AiSuggestedMove = styled.span`
     font-size: 18px;
-    color: #ff6b6b;
+    color: var(--color-red-500);
     display: block;
     margin: 5px 0;
 `;

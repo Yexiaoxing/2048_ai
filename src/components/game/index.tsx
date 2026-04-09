@@ -1,4 +1,5 @@
 import type React from "react";
+import { useDebugMode } from "../../hooks/useDebugMode";
 import { useGame } from "../../hooks/useGame";
 import { useGameAI } from "../../hooks/useGameAI";
 import { useGameKeyboardControl } from "../../hooks/useGameKeyboardControl";
@@ -6,6 +7,7 @@ import { stringToDirection } from "../../shared/game-logic";
 import { AiSettingsDialog } from "../ai-settings-dialog";
 import { Board } from "../board";
 import { Controls } from "../controls";
+import { DebugBoardOverride } from "../debug-board-override";
 import { Header } from "../header";
 import { Button } from "../ui/button";
 import {
@@ -23,7 +25,8 @@ import {
 import { getStatusMessage } from "./strings";
 
 export const Game: React.FC = () => {
-    const { score, moves, board, move, gameStatus, resetGame } = useGame();
+    const { score, moves, board, move, gameStatus, resetGame, overrideBoard } = useGame();
+    const { isDebugMode, toggleDebugMode } = useDebugMode();
 
     useGameKeyboardControl((dir) => move(dir));
 
@@ -56,6 +59,13 @@ export const Game: React.FC = () => {
                 </Button>
             </StretchedRow>
             <Controls onMove={move} />
+
+            <DebugBoardOverride
+                board={board}
+                onOverride={overrideBoard}
+                isDebugMode={isDebugMode}
+                onToggleDebugMode={toggleDebugMode}
+            />
 
             <AiActionRow>
                 <Button onClick={queryAI} variant={"success"} disabled={status === "loading"}>
