@@ -220,6 +220,7 @@ export const AiSettingsDialog: React.FC = () => {
                     </FormContainer>
                     <DialogFooter>
                         <Button
+                            type="button"
                             variant="outline"
                             onClick={() => setOpen(false)}
                             disabled={savingConfig}
