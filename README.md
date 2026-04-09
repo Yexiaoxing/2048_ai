@@ -29,3 +29,9 @@ Development Tools:
 AI Model:
 
 - TODO
+
+## Use Ollama and Configure CORS
+
+To use the AI suggestion feature, you need to have Ollama installed and running on your machine. Follow the instructions on the [Ollama website](https://ollama.com/) to set it up.
+
+If you want to use ollama in a production environment, make sure you configure the Ollama to allow origin. Check the [Ollama documentation](https://docs.ollama.com/faq#how-can-i-allow-additional-web-origins-to-access-ollama) for more details on how to do this.
