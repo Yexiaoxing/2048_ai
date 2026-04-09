@@ -36,6 +36,6 @@ export const CellFontSizes: Record<number, string> = {
     128: "45px",
     256: "45px",
     512: "45px",
-    1024: "40px",
-    2048: "40px",
+    1024: "35px",
+    2048: "35px",
 };
