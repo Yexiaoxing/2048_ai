@@ -1,10 +1,6 @@
-/**
- * LLM inference implementations
- */
-
 import { getAIMove } from "../../src/shared/game-ai/game-ai-local";
 import { getRemoteAIMove } from "../../src/shared/game-ai/game-ai-remote";
-import { type Board, Direction } from "../../src/shared/game-types";
+import type { Board } from "../../src/shared/game-types";
 
 export interface LLMConfig {
 	name: string;
@@ -20,42 +16,6 @@ export interface LLMResponse {
 	error: string | null;
 }
 
-const SYSTEM_PROMPT = `You are a deep thinker. You analyze problems and provide answers as asked of you. When answering you provide your reasoning in <thinking> tags and final answer in <answer> tags. <thinking>
-Write your detailed analysis and step-by-step reasoning here
-</thinking>
-<answer>
-Write your final response here
-</answer>
-You do not say anything outside of the tags. You follow the format exactly as asked of you.`;
-
-const LLM_PROMPT_TEMPLATE = `You are an expert 2048 game player. Given a board state, select the best next move.
-
-The 2048 game board is a 4x4 grid where tiles with powers of 2 can be merged by swiping.
-When identical tiles collide, they combine into one tile with double the value.
-
-Current board state:
-{board_text}
-
-Analyze this board carefully. Consider:
-1. Available empty cells
-2. Potential tile merges
-3. High-value tile positions
-4. Avoiding game-ending situations
-
-Based on your analysis, what is the BEST move? Choose only one direction:
-- up
-- down
-- left
-- right
-
-Format your response as follows:
-<thinking>
-Analyze the current board configuration thoroughly. Consider what happens with each possible move (up, down, left, right). Think about immediate merges, resulting empty cells, and how the board position affects future possibilities. Consider how each move impacts your ability to create higher-value tiles and maximize score. Think several moves ahead if possible. Then make your decision to move up, down, left, or right.
-</thinking>
-<answer>
-[SINGLE WORD RESPONSE: up/down/left/right]
-</answer>`;
-
 export class LLMInference {
 	protected config: LLMConfig;
 
@@ -63,7 +23,7 @@ export class LLMInference {
 		this.config = config;
 	}
 
-	async generate(board: Board): Promise<LLMResponse> {
+	async generate(_board: Board): Promise<LLMResponse> {
 		throw new Error("Not implemented");
 	}
 
@@ -73,11 +33,8 @@ export class LLMInference {
 }
 
 export class OllamaInference extends LLMInference {
-	private baseUrl: string;
-
 	constructor(config: LLMConfig) {
 		super(config);
-		this.baseUrl = config.baseUrl || "http://localhost:11434";
 	}
 
 	async generate(board: Board): Promise<LLMResponse> {
@@ -138,25 +95,6 @@ export class OpenAIInference extends LLMInference {
 			return { completion: "", error: errorMessage };
 		}
 	}
-}
-
-export function parseAction(completion: string): string | null {
-	const match = completion.match(/<answer>\s*(.*?)\s*<\/answer>/is);
-
-	if (match) {
-		const action = match[1].trim().toLowerCase();
-		if (["up", "down", "left", "right"].includes(action)) {
-			return action;
-		}
-	}
-
-	// Fallback: check if entire response is just the action word
-	const simple = completion.trim().toLowerCase();
-	if (["up", "down", "left", "right"].includes(simple)) {
-		return simple;
-	}
-
-	return null;
 }
 
 export function createInference(config: LLMConfig): LLMInference {
