@@ -2,8 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Board } from "../game-types";
 import { getAIMove, queryAvailableModels } from "./game-ai-local";
 
-const listMock = vi.fn();
-const chatMock = vi.fn();
+const { listMock, chatMock } = vi.hoisted(() => ({
+    listMock: vi.fn(),
+    chatMock: vi.fn(),
+}));
 
 vi.mock("ollama/browser", () => ({
     default: {
