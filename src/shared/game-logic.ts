@@ -1,3 +1,4 @@
+import { logger } from "../utils/logger";
 import { getRandomInteger } from "../utils/random";
 import { type Board, type Coordinates, Direction } from "./game-types";
 
@@ -10,7 +11,7 @@ export const getInitialBoard = (spawnCount: number): Board => {
         .map(() => Array(BOARD_SIZE).fill(0));
 
     for (let i = 0; i < spawnCount; i++) {
-        board = spawnTile(board);
+        board = spawnTile(board, 1); // Spawn only '2' tiles for the initial board
     }
 
     return board;
@@ -49,14 +50,17 @@ export const copyBoard = (board: Board): Board => {
  * @param board The current game board
  * @returns A new board with a new tile spawned
  */
-export const spawnTile = (board: Board): Board => {
+export const spawnTile = (board: Board, smallTileProbability = NEW_TILE_PROBABILITY): Board => {
     const emptyCell = getEmptyCells(board);
     if (emptyCell.length === 0) return board;
 
     const newBoard = copyBoard(board);
     const [row, col] = emptyCell[getRandomInteger(0, emptyCell.length - 1)];
-    const value = Math.random() < NEW_TILE_PROBABILITY ? 2 : 4;
+    const value = Math.random() < smallTileProbability ? 2 : 4;
     newBoard[row][col] = value;
+
+    logger.info(`Spawned tile ${value} at position (${row}, ${col})`);
+
     return newBoard;
 };
 
