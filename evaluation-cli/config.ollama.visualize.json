@@ -1,0 +1,15 @@
+{
+    "models": [
+        {
+            "name": "gemma4:e4b",
+            "type": "ollama",
+            "path": "gemma4:e4b"
+        }
+    ],
+    "numRuns": 3,
+    "visualize": true,
+    "visualizeDelayMs": 500,
+    "resultsFile": "2048_evaluation_results.csv",
+    "statsFile": "2048_evaluation_stats.json",
+    "style": "classic"
+}

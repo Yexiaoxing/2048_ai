@@ -242,3 +242,18 @@ export const isBoardChanged = (board1: Board, board2: Board): boolean => {
     }
     return false;
 };
+
+export function stringToDirection(action: string): Direction | null {
+    switch (action.toLowerCase()) {
+        case "up":
+            return Direction.Up;
+        case "down":
+            return Direction.Down;
+        case "left":
+            return Direction.Left;
+        case "right":
+            return Direction.Right;
+        default:
+            return null;
+    }
+}

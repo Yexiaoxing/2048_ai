@@ -1,0 +1,18 @@
+{
+    "models": [
+        {
+            "name": "GPT-4o-Mini",
+            "type": "openai",
+            "apiModelName": "gpt-4o-mini",
+            "baseUrl": "https://api.openai.com/v1",
+            "apiKey": "YOUR_OPENAI_API_KEY"
+        }
+    ],
+    "numRuns": 20,
+    "maxGameMoves": 2000,
+    "visualize": false,
+    "visualizeDelayMs": 750,
+    "resultsFile": "2048_evaluation_results.csv",
+    "statsFile": "2048_evaluation_stats.json",
+    "style": "classic"
+}

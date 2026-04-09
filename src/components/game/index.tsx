@@ -2,7 +2,7 @@ import type React from "react";
 import { useGame } from "../../hooks/useGame";
 import { useGameAI } from "../../hooks/useGameAI";
 import { useGameKeyboardControl } from "../../hooks/useGameKeyboardControl";
-import { Direction } from "../../shared/game-types";
+import { stringToDirection } from "../../shared/game-logic";
 import { AiSettingsDialog } from "../ai-settings-dialog";
 import { Board } from "../board";
 import { Controls } from "../controls";
@@ -31,19 +31,9 @@ export const Game: React.FC = () => {
         useGameAI(board);
 
     const applyMoveSuggestion = (suggestedMove: string) => {
-        switch (suggestedMove.toLocaleLowerCase()) {
-            case "up":
-                move(Direction.Up);
-                break;
-            case "down":
-                move(Direction.Down);
-                break;
-            case "left":
-                move(Direction.Left);
-                break;
-            case "right":
-                move(Direction.Right);
-                break;
+        const direction = stringToDirection(suggestedMove);
+        if (direction !== null) {
+            move(direction);
         }
         resetSuggestion();
     };

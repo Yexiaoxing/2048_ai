@@ -1,0 +1,21 @@
+{
+    "models": [
+        {
+            "name": "gemma4:e4b",
+            "type": "ollama",
+            "path": "gemma4:e4b"
+        },
+        {
+            "name": "qwen3.5:9b",
+            "type": "ollama",
+            "path": "qwen3.5:9b"
+        }
+    ],
+    "numRuns": 20,
+    "maxGameMoves": 2000,
+    "visualize": false,
+    "visualizeDelayMs": 750,
+    "resultsFile": "2048_evaluation_results.csv",
+    "statsFile": "2048_evaluation_stats.json",
+    "style": "classic"
+}
