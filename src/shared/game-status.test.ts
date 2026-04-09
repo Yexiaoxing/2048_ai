@@ -33,7 +33,7 @@ describe("game-status", () => {
                 [2, 4, 8, 16],
                 [32, 64, 128, 256],
                 [512, 1024, 4096, 4],
-                [2, 8, 16, 32],
+                [0, 8, 16, 32],
             ];
 
             expect(getGameStatus(board)).toBe(GameStatus["playing-more-2048"]);
