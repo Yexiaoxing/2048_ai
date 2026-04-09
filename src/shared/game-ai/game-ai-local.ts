@@ -16,7 +16,12 @@ export const getAIMove = async (board: Board, model: string): Promise<IGameAiRes
         format: gameAiSchema.toJSONSchema(),
     });
 
-    const content: GameAiSchema = JSON.parse(response.message.content);
+    let content: GameAiSchema;
+    try {
+        content = JSON.parse(response.message.content);
+    } catch {
+        throw new Error("Local AI returned invalid JSON in message content.");
+    }
 
     const parsedAiResponse = gameAiSchema.safeParse(content);
 

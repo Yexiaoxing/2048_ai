@@ -213,7 +213,7 @@ export const canMove = (board: Board): boolean => {
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
             const current = board[i][j];
-            if (current !== null) {
+            if (current !== 0) {
                 // Check right
                 if (j < BOARD_SIZE - 1 && board[i][j + 1] === current) {
                     return true;

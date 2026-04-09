@@ -75,6 +75,38 @@ describe("getRemoteAIMove", () => {
         ).rejects.toThrow("Remote AI request failed (401): Invalid API key");
     });
 
+    it("uses top-level message when error payload has no nested object", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue({
+            ok: false,
+            status: 429,
+            statusText: "Too Many Requests",
+            json: async () => ({
+                message: "Rate limit exceeded",
+            }),
+        } as Response);
+
+        await expect(
+            getRemoteAIMove(board, {
+                apiEndpoint: "https://example.com/chat/completions",
+            }),
+        ).rejects.toThrow("Remote AI request failed (429): Rate limit exceeded");
+    });
+
+    it("falls back to status text when payload has no message", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue({
+            ok: false,
+            status: 503,
+            statusText: "Service Unavailable",
+            json: async () => ({}),
+        } as Response);
+
+        await expect(
+            getRemoteAIMove(board, {
+                apiEndpoint: "https://example.com/chat/completions",
+            }),
+        ).rejects.toThrow("Remote AI request failed (503): Service Unavailable");
+    });
+
     it("throws when success response has missing message content", async () => {
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: true,

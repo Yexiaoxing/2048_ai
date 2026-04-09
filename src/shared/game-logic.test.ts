@@ -4,12 +4,17 @@ import {
     compressRow,
     getEmptyCells,
     getInitialBoard,
+    isBoardChanged,
+    mergeRow,
+    moveBoard,
     moveDown,
     moveLeft,
     moveRight,
     moveUp,
     spawnTile,
+    stringToDirection,
 } from "./game-logic";
+import { Direction } from "./game-types";
 
 describe("Game Logic", () => {
     describe("getInitialBoard", () => {
@@ -114,6 +119,20 @@ describe("Game Logic", () => {
             const row = [2, 2, 4, 0];
             const compressed = compressRow(row);
             expect(compressed).toEqual([2, 2, 4, 0]);
+        });
+    });
+
+    describe("mergeRow", () => {
+        it("should merge adjacent equal numbers once per pair", () => {
+            const [merged, scoreGain] = mergeRow([2, 2, 2, 2]);
+            expect(merged).toEqual([4, 0, 4, 0]);
+            expect(scoreGain).toBe(8);
+        });
+
+        it("should not merge values more than once in a chain", () => {
+            const [merged, scoreGain] = mergeRow([4, 4, 4, 0]);
+            expect(merged).toEqual([8, 0, 4, 0]);
+            expect(scoreGain).toBe(8);
         });
     });
 
@@ -306,6 +325,41 @@ describe("Game Logic", () => {
                 [8192, 16384, 32768, 65536],
             ];
             expect(canMove(board)).toBe(false);
+        });
+    });
+
+    describe("isBoardChanged", () => {
+        it("should return false for identical boards", () => {
+            const board: (number | 0)[][] = [
+                [2, 4, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+            ];
+
+            expect(
+                isBoardChanged(
+                    board,
+                    board.map((row) => [...row]),
+                ),
+            ).toBe(false);
+        });
+
+        it("should return true when any cell differs", () => {
+            const board1: (number | 0)[][] = [
+                [2, 4, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+            ];
+            const board2: (number | 0)[][] = [
+                [2, 4, 0, 0],
+                [0, 0, 0, 0],
+                [0, 2, 0, 0],
+                [0, 0, 0, 0],
+            ];
+
+            expect(isBoardChanged(board1, board2)).toBe(true);
         });
     });
 });

@@ -10,8 +10,8 @@ export const getMaxTile = (board: Board): number => {
     let max = 0;
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
-            if (board[i][j] !== null && (board[i][j] as number) > max) {
-                max = board[i][j] as number;
+            if (board[i][j] > max) {
+                max = board[i][j];
             }
         }
     }
