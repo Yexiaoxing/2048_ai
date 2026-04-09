@@ -16,7 +16,7 @@ interface CLIConfig {
 	visualize: boolean;
 	visualizeDelayMs: number;
 	resultsFile: string;
-	statesFile: string;
+	statsFile: string;
 	style: string;
 }
 
@@ -34,7 +34,7 @@ const DEFAULT_CONFIG: CLIConfig = {
 	visualize: false,
 	visualizeDelayMs: 750,
 	resultsFile: "2048_evaluation_results.csv",
-	statesFile: "2048_evaluation_states.json",
+	statsFile: "2048_evaluation_stats.json",
 	style: "classic",
 };
 
@@ -46,8 +46,15 @@ function loadConfig(configPath?: string): CLIConfig {
 	if (resolvedPath && fs.existsSync(resolvedPath)) {
 		try {
 			const fileContent = fs.readFileSync(resolvedPath, "utf8");
-			const loaded = JSON.parse(fileContent);
-			return { ...DEFAULT_CONFIG, ...loaded };
+			const loaded = JSON.parse(fileContent) as Partial<CLIConfig> & {
+				statesFile?: string;
+			};
+			const statsFile = loaded.statsFile ?? loaded.statesFile;
+			return {
+				...DEFAULT_CONFIG,
+				...loaded,
+				...(statsFile ? { statsFile } : {}),
+			};
 		} catch (error) {
 			console.error(
 				chalk.red(`Error loading config from ${configPath}:`),
@@ -84,7 +91,7 @@ async function main() {
 			),
 		);
 		console.log(chalk.gray(`  Results file: ${config.resultsFile}\n`));
-		console.log(chalk.gray(`  States file: ${config.statesFile}\n`));
+		console.log(chalk.gray(`  Stats file: ${config.statsFile}\n`));
 
 		const logger = new ResultsLogger(config.resultsFile);
 		const evaluationConfig: EvaluationConfig = {
@@ -92,7 +99,7 @@ async function main() {
 			maxGameMoves: config.maxGameMoves,
 			visualize: config.visualize,
 			visualizeDelayMs: config.visualizeDelayMs,
-			styleeName: config.style,
+			styleName: config.style,
 		};
 
 		const evaluator = new GameEvaluator(evaluationConfig);
@@ -217,9 +224,9 @@ async function main() {
 					);
 					console.log(chalk.gray(`  Avg Moves: ${stats.avgMoves.toFixed(1)}`));
 
-					writeStatsToFile(stats, config.statesFile);
+					writeStatsToFile(stats, config.statsFile);
 
-					console.log(chalk.green(`\n✅ Stats saved to: ${config.statesFile}`));
+					console.log(chalk.green(`\n✅ Stats saved to: ${config.statsFile}`));
 				} else {
 					console.log(chalk.red("  ❌ No successful runs"));
 					modelSummary[modelName] = { error: "No successful runs" };

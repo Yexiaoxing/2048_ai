@@ -9,16 +9,14 @@ export interface EvaluationConfig {
 	maxGameMoves: number;
 	visualize: boolean;
 	visualizeDelayMs: number;
-	styleeName?: string;
+	styleName?: string;
 }
 
 export class GameEvaluator {
 	private config: EvaluationConfig;
-	private renderer: TUIRenderer;
 
 	constructor(config: EvaluationConfig) {
 		this.config = config;
-		this.renderer = new TUIRenderer(config.styleeName || "classic");
 	}
 
 	async playGame(
