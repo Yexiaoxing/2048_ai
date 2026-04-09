@@ -25,3 +25,17 @@ export const CellTextColors: Record<number, string> = {
     1024: "#f9f6f2",
     2048: "#f9f6f2",
 };
+
+export const CellFontSizes: Record<number, string> = {
+    2: "55px",
+    4: "55px",
+    8: "55px",
+    16: "50px",
+    32: "50px",
+    64: "50px",
+    128: "45px",
+    256: "45px",
+    512: "45px",
+    1024: "40px",
+    2048: "40px",
+};

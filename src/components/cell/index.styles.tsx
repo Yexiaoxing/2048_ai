@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CellColors, CellTextColors } from "./colors";
+import { CellColors, CellFontSizes, CellTextColors } from "./colors";
 
 export const StyledCell = styled.div<{ $value: number }>`
     background-color: ${(props) => (props.$value ? CellColors[props.$value] : "#cdc1b4")};
@@ -7,7 +7,7 @@ export const StyledCell = styled.div<{ $value: number }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 50px;
+    font-size: ${(props) => (props.$value ? CellFontSizes[props.$value] : "transparent")};
     font-weight: 700;
     border-radius: 4px;
 
