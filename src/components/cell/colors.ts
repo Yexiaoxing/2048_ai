@@ -1,4 +1,5 @@
 export const CellColors: Record<number, string> = {
+    0: "#cdc1b4",
     2: "#eee4da",
     4: "#ede0c8",
     8: "#f2b179",
@@ -13,6 +14,7 @@ export const CellColors: Record<number, string> = {
 };
 
 export const CellTextColors: Record<number, string> = {
+    0: "transparent",
     2: "#776e65",
     4: "#776e65",
     8: "#f9f6f2",
@@ -27,6 +29,7 @@ export const CellTextColors: Record<number, string> = {
 };
 
 export const CellFontSizes: Record<number, string> = {
+    0: "55px",
     2: "55px",
     4: "55px",
     8: "55px",
@@ -36,6 +39,6 @@ export const CellFontSizes: Record<number, string> = {
     128: "45px",
     256: "45px",
     512: "45px",
-    1024: "35px",
-    2048: "35px",
+    1024: "30px",
+    2048: "30px",
 };
