@@ -3,6 +3,32 @@ import type { IGameAiResponse } from "./game-ai.types";
 import { getGameAIMessages } from "./prompt";
 import { gameAiSchema } from "./schema";
 
+const getRemoteErrorMessage = (payload: unknown): string | null => {
+    if (!payload || typeof payload !== "object") {
+        return null;
+    }
+
+    const record = payload as Record<string, unknown>;
+    const message = record.message;
+    if (typeof message === "string" && message.trim().length > 0) {
+        return message;
+    }
+
+    const error = record.error;
+    if (typeof error === "string" && error.trim().length > 0) {
+        return error;
+    }
+
+    if (error && typeof error === "object") {
+        const errorMessage = (error as Record<string, unknown>).message;
+        if (typeof errorMessage === "string" && errorMessage.trim().length > 0) {
+            return errorMessage;
+        }
+    }
+
+    return null;
+};
+
 interface IRemoteAiConfig {
     apiEndpoint: string;
     apiSecret?: string;
@@ -38,10 +64,33 @@ export const getRemoteAIMove = async (
         }),
     });
 
-    const content = (await response.json()) as {
-        choices: { message: { content: string } }[];
-    };
-    const parsedAiResponse = gameAiSchema.safeParse(JSON.parse(content.choices[0].message.content));
+    let payload: unknown;
+    try {
+        payload = await response.json();
+    } catch {
+        throw new Error(`Remote AI returned a non-JSON response (${response.status}).`);
+    }
+
+    if (!response.ok) {
+        const message = getRemoteErrorMessage(payload) || response.statusText || "Unknown error";
+        throw new Error(`Remote AI request failed (${response.status}): ${message}`);
+    }
+
+    const choices = (payload as { choices?: { message?: { content?: string } }[] }).choices;
+    const content = choices?.[0]?.message?.content;
+
+    if (typeof content !== "string" || content.trim().length === 0) {
+        throw new Error("Remote AI response did not contain message content.");
+    }
+
+    let parsedContent: unknown;
+    try {
+        parsedContent = JSON.parse(content);
+    } catch {
+        throw new Error("Remote AI returned invalid JSON in message content.");
+    }
+
+    const parsedAiResponse = gameAiSchema.safeParse(parsedContent);
 
     if (parsedAiResponse.success) {
         return {
@@ -50,5 +99,7 @@ export const getRemoteAIMove = async (
         };
     }
 
-    throw parsedAiResponse.error;
+    throw new Error(
+        `Remote AI response schema validation failed: ${parsedAiResponse.error.message}`,
+    );
 };
