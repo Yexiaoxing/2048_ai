@@ -26,7 +26,7 @@ export const getMaxTile = (board: Board): number => {
  */
 export const getGameStatus = (board: Board): GameStatus => {
     // If max tile is reached but not 2048, still playing but with special status
-    if (getMaxTile(board) > WINNING_TILE) {
+    if (getMaxTile(board) > WINNING_TILE && canMove(board)) {
         return GameStatus["playing-more-2048"];
     }
 
