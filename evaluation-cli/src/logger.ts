@@ -17,6 +17,8 @@ export interface GameResult {
 	error: string | null;
 }
 
+type CsvRecord = GameResult & Record<string, unknown>;
+
 const FIELDNAMES = [
 	"timestamp",
 	"modelName",
@@ -49,7 +51,7 @@ export class ResultsLogger {
 		}
 	}
 
-	logResult(result: GameResult): void {
+	logResult(result: CsvRecord): void {
 		try {
 			const row = this._resultToCsvRow(result);
 			fs.appendFileSync(this.filename, `${row}\n`, "utf8");
@@ -58,11 +60,14 @@ export class ResultsLogger {
 		}
 	}
 
-	private _resultToCsvRow(result: GameResult): string {
+	private _resultToCsvRow(result: CsvRecord): string {
 		const values = FIELDNAMES.map((field) => {
-			const value: any = (result as any)[
-				field.charAt(0).toLowerCase() + field.slice(1)
-			];
+			const camelCaseKey = field.includes("_")
+				? field.replace(/_([a-z])/g, (_, letter: string) =>
+						letter.toUpperCase(),
+					)
+				: field.charAt(0).toLowerCase() + field.slice(1);
+			const value = result[field] ?? result[camelCaseKey];
 
 			if (value === undefined || value === null) {
 				return "";
@@ -70,7 +75,11 @@ export class ResultsLogger {
 
 			if (typeof value === "string") {
 				// Escape quotes and wrap in quotes if contains comma
-				if (value.includes(",") || value.includes('"')) {
+				if (
+					value.includes(",") ||
+					value.includes('"') ||
+					value.includes("\n")
+				) {
 					return `"${value.replace(/"/g, '""')}"`;
 				}
 				return value;
