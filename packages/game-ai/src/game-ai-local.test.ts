@@ -1,5 +1,5 @@
+import type { Board } from "@2048/game-logic";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { Board } from "../game-types";
 import { getAIMove, queryAvailableModels } from "./game-ai-local";
 
 const { listMock, chatMock } = vi.hoisted(() => ({

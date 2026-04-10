@@ -1,0 +1,17 @@
+{
+    "name": "@2048/logger",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "typecheck": "tsc -p tsconfig.json --noEmit"
+    },
+    "devDependencies": {
+        "@types/node": "^24.12.0",
+        "typescript": "~6.0.2"
+    }
+}

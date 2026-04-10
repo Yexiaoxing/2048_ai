@@ -1,9 +1,9 @@
+import { aiConfigStore } from "@2048/game-ai/game-ai-configs";
+import { getAIMove, queryAvailableModels } from "@2048/game-ai/game-ai-local";
+import { getRemoteAIMove } from "@2048/game-ai/game-ai-remote";
 import type { Board } from "@2048/game-logic";
-import { aiConfigStore } from "@2048/game-logic/game-ai/game-ai-configs";
-import { getAIMove, queryAvailableModels } from "@2048/game-logic/game-ai/game-ai-local";
-import { getRemoteAIMove } from "@2048/game-logic/game-ai/game-ai-remote";
+import { logger } from "@2048/logger";
 import { useCallback, useState } from "react";
-import { logger } from "../utils/logger";
 
 export const useGameAI = (board: Board) => {
     const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");

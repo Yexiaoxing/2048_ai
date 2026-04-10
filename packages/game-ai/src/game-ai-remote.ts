@@ -1,4 +1,4 @@
-import type { Board } from "../game-types";
+import type { Board } from "@2048/game-logic";
 import type { IGameAiResponse } from "./game-ai.types";
 import { getGameAIMessages } from "./prompt";
 import { gameAiSchema } from "./schema";

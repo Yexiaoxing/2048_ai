@@ -7,13 +7,16 @@
         "dev:all": "pnpm -r --parallel --if-present dev",
         "build": "pnpm -r --if-present build",
         "test": "pnpm -r --if-present test",
-        "lint": "pnpm -r --if-present lint",
+        "test-ci": "pnpm -r --if-present test-ci",
+        "typecheck": "pnpm -r --if-present typecheck",
+        "lint": "biome check && pnpm -r --if-present typecheck",
+        "lint:fix": "biome check --write",
         "storybook": "pnpm --filter @2048/web storybook",
         "build-storybook": "pnpm --filter @2048/web build-storybook",
         "prepare": "husky"
     },
     "devDependencies": {
-        "biome": "^0.3.3",
+        "@biomejs/biome": "2.4.10",
         "husky": "^9.1.7",
         "lint-staged": "^16.4.0"
     },

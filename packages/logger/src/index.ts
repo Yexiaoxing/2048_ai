@@ -1,5 +1,3 @@
-// TODO: Replace console.log with a proper logging library for better log management and formatting.
-// TODO: Add remote log collector
 export const logger = {
     info: (message: string) => {
         console.log(`[INFO] ${message}`);

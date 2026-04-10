@@ -1,5 +1,5 @@
+import type { Board } from "@2048/game-logic";
 import ollama from "ollama/browser";
-import type { Board } from "../game-types";
 import type { IGameAiResponse } from "./game-ai.types";
 import { getGameAIMessages } from "./prompt";
 import { type GameAiSchema, gameAiSchema } from "./schema";

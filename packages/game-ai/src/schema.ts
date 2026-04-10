@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const gameAiSchema = z.object({
-    move: z.enum(["up", "down", "left", "right"]),
+    move: z.enum(["up", "down", "left", "right", "invalid"]),
     reason: z.string().nullable(),
 });
 

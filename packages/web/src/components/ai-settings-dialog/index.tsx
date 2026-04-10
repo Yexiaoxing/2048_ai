@@ -1,8 +1,8 @@
 import {
 	type AIConfig,
 	aiConfigStore,
-} from "@2048/game-logic/game-ai/game-ai-configs";
-import { queryAvailableModels } from "@2048/game-logic/game-ai/game-ai-local";
+} from "@2048/game-ai/game-ai-configs";
+import { queryAvailableModels } from "@2048/game-ai/game-ai-local";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { styled } from "styled-components";
