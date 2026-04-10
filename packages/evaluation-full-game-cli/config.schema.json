@@ -1,0 +1,142 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://2048-ai.local/schemas/evaluation-full-game-cli-config.schema.json",
+    "title": "2048 Full Game Evaluator Config",
+    "description": "Configuration for packages/evaluation-full-game-cli/src/cli.ts",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "models": {
+            "description": "Models to evaluate. If omitted, built-in defaults are used.",
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/modelConfig"
+            },
+            "minItems": 1
+        },
+        "numRuns": {
+            "description": "Number of full game runs per model.",
+            "type": "integer",
+            "minimum": 1,
+            "default": 20
+        },
+        "maxGameMoves": {
+            "description": "Maximum number of moves before a game run is forcibly terminated.",
+            "type": "integer",
+            "minimum": 1,
+            "default": 2000
+        },
+        "visualize": {
+            "description": "Enable TUI board visualization for the first model's first run.",
+            "type": "boolean",
+            "default": false
+        },
+        "visualizeDelayMs": {
+            "description": "Delay in milliseconds between visualized moves.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 750
+        },
+        "resultsFile": {
+            "description": "Path to write per-run results CSV.",
+            "type": "string",
+            "minLength": 1,
+            "default": "results/2048_evaluation_results.csv"
+        },
+        "statsFile": {
+            "description": "Path to write aggregated statistics JSON. Alias: statesFile (deprecated).",
+            "type": "string",
+            "minLength": 1,
+            "default": "results/2048_evaluation_stats.json"
+        },
+        "statesFile": {
+            "description": "Deprecated alias for statsFile.",
+            "type": "string",
+            "minLength": 1
+        },
+        "stepTraceFile": {
+            "description": "Path to write per-step trace JSON. Alias: traceFile (deprecated).",
+            "type": "string",
+            "minLength": 1,
+            "default": "results/2048_evaluation_steps.json"
+        },
+        "traceFile": {
+            "description": "Deprecated alias for stepTraceFile.",
+            "type": "string",
+            "minLength": 1
+        },
+        "style": {
+            "description": "TUI board color style used when visualize is true.",
+            "type": "string",
+            "enum": ["classic", "dark"],
+            "default": "classic"
+        }
+    },
+    "$defs": {
+        "modelConfig": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "type"],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Display name for reporting."
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["ollama", "openai"]
+                },
+                "path": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Ollama model path/tag. If omitted, name is used."
+                },
+                "apiModelName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Remote model name sent to the OpenAI-compatible endpoint."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "OpenAI-compatible base URL (default: https://api.openai.com/v1)."
+                },
+                "apiKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "API key. Optional if OPENAI_API_KEY environment variable is set."
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": { "type": { "const": "ollama" } },
+                        "required": ["type"]
+                    },
+                    "then": {
+                        "not": {
+                            "anyOf": [
+                                { "required": ["apiModelName"] },
+                                { "required": ["baseUrl"] },
+                                { "required": ["apiKey"] }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": { "type": { "const": "openai" } },
+                        "required": ["type"]
+                    },
+                    "then": {
+                        "not": { "required": ["path"] }
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "$schema": "./config.schema.json",
+    "models": [
+        {
+            "name": "gemma4:e4b",
+            "type": "ollama",
+            "path": "gemma4:e4b"
+        },
+        {
+            "name": "qwen3.5:9b",
+            "type": "ollama",
+            "path": "qwen3.5:9b"
+        }
+    ],
+    "resultsFile": "results/2048_evaluation_results.csv",
+    "limit": 5
+}

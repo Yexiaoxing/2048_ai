@@ -20,7 +20,6 @@ This project is a web-based implementation of the popular game 2048, enhanced wi
 - `pnpm run build`: Build all workspace packages that expose a build script.
 - `pnpm run test`: Run all workspace package tests.
 - `pnpm --filter @2048/web storybook`: Run Storybook for the web package.
-- `pnpm --filter @2048/evaluation-cli start`: Run the evaluation CLI.
 
 ## Shared Package Scripts
 
@@ -57,3 +56,7 @@ AI Model:
 To use the AI suggestion feature, you need to have Ollama installed and running on your machine. Follow the instructions on the [Ollama website](https://ollama.com/) to set it up.
 
 If you want to use ollama in a production environment, make sure you configure the Ollama to allow origin. Check the [Ollama documentation](https://docs.ollama.com/faq#how-can-i-allow-additional-web-origins-to-access-ollama) for more details on how to do this.
+
+## Evaluations
+
+Please refer to the [evaluation README](evaluation/README.md) for details on how to do evaluation.

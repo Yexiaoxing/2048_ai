@@ -1,17 +1,20 @@
 {
-    "name": "@2048/evaluation-cli",
+    "name": "@2048/evaluation-full-game-cli",
     "version": "1.0.0",
     "description": "CLI tool for evaluating LLM agents playing 2048",
     "main": "src/cli.ts",
     "scripts": {
-        "start": "tsx src/cli.ts"
+        "start": "tsx src/cli.ts",
+        "dataset:generate": "tsx dataset/generate.ts"
     },
     "dependencies": {
         "@2048/game-ai": "workspace:*",
         "@2048/game-logic": "workspace:*",
-        "chalk": "^4.1.2"
+        "chalk": "^4.1.2",
+        "cli-progress": "^3.12.0"
     },
     "devDependencies": {
+        "@types/cli-progress": "^3.11.6",
         "@types/node": "^20.0.0",
         "tsx": "^4.0.0",
         "typescript": "~6.0.2"

@@ -2,15 +2,6 @@
 
 A command-line tool to evaluate LLM agents playing 2048 with TUI (Terminal User Interface) visualization support.
 
-## Installation
-
-```bash
-// run install from root first to setup shared packages
-
-cd evaluation-cli
-pnpm install
-```
-
 ## Configuration
 
 Create a JSON configuration file (see examples):

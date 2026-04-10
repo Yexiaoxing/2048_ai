@@ -16,3 +16,11 @@ This directory contains tools and scripts for evaluating the performance of LLM 
    This mode evaluates the LLM agent's ability to suggest the best move for a given board state. A dataset of board states with known optimal moves is used for evaluation.
 
    Note: The dataset is generated using a Alpha-Beta pruning algorithm and may not be perfect. It serves as a reference for evaluating the LLM agent's move suggestions.
+
+## Full Game Evaluation with TUI Visualization
+
+To run the full game evaluation with TUI visualization, check the README [here](../packages/evaluation-full-game-cli/README.md) for detailed instructions and examples.
+
+## Single Move Evaluation
+
+To run the single move evaluation, check the README [here](../packages/evaluation-single-move-cli/README.md) for detailed instructions and examples.
