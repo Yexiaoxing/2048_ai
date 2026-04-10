@@ -30,6 +30,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
         board.map((row) => row.map((val) => (val === 0 ? "" : val))),
     );
     const [error, setError] = useState<string | null>(null);
+    const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
     const handleCellChange = (row: number, col: number, value: string) => {
         const numValue = value === "" ? 0 : parseInt(value, 10);
@@ -78,6 +79,17 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
         setError(null);
     }, [board]);
 
+    const handleCopyBoard = useCallback(async () => {
+        try {
+            await navigator.clipboard.writeText(JSON.stringify(board));
+            setCopyStatus("Board copied");
+            setError(null);
+        } catch {
+            setCopyStatus(null);
+            setError("Failed to copy board state to clipboard.");
+        }
+    }, [board]);
+
     // biome-ignore lint/correctness/useExhaustiveDependencies: By design, only want to reset on re-open
     useEffect(() => {
         // Reset debug board inputs to current board whenever debug mode is toggled on
@@ -85,8 +97,21 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
             handleResetToCurrentBoard();
         } else {
             setError(null);
+            setCopyStatus(null);
         }
     }, [isDebugMode]);
+
+    useEffect(() => {
+        if (!copyStatus) {
+            return;
+        }
+
+        const timer = window.setTimeout(() => {
+            setCopyStatus(null);
+        }, 2500);
+
+        return () => window.clearTimeout(timer);
+    }, [copyStatus]);
 
     if (!isDebugMode) {
         return (
@@ -106,6 +131,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
             </DebugHintText>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
+            {copyStatus && <DebugHintText>{copyStatus}</DebugHintText>}
 
             <BoardInputContainer>
                 {inputValues.map((row, rowIdx) =>
@@ -127,6 +153,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
                 <DebugButton onClick={handleApplyBoard}>✓ Apply Board</DebugButton>
                 <DebugButton onClick={handleResetToCurrentBoard}>↻ Reset</DebugButton>
                 <DebugButton onClick={handleClearBoard}>✕ Clear</DebugButton>
+                <DebugButton onClick={handleCopyBoard}>⧉ Copy Board</DebugButton>
             </DebugButtonContainer>
         </DebugPanelContainer>
     );

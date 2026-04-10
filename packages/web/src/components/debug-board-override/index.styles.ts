@@ -44,6 +44,7 @@ export const DebugButtonContainer = styled.div`
     display: flex;
     gap: 8px;
     justify-content: center;
+    flex-wrap: wrap;
 `;
 
 export const DebugButton = styled(Button).attrs({ variant: "destructive" })``;
