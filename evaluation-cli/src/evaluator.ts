@@ -1,7 +1,7 @@
 import { stringToDirection } from "../../src/shared/game-logic";
 import { Game2048 } from "./game";
 import type { LLMInference } from "./llm";
-import type { GameResult } from "./logger";
+import type { GameStepTrace, GameTrace } from "./logger";
 
 export interface EvaluationConfig {
 	numRuns: number;
@@ -27,11 +27,12 @@ export class GameEvaluator {
 			message: string,
 			noRenderBoard?: boolean,
 		) => void,
-	): Promise<GameResult> {
+	): Promise<GameTrace> {
 		let overallMaxTile = 0;
 		let overallMaxScore = 0;
 
 		const game = new Game2048();
+		const steps: GameStepTrace[] = [];
 
 		let score = 0;
 		let movesCount = 0;
@@ -42,7 +43,10 @@ export class GameEvaluator {
 
 		// --- Inner game loop ---
 		while (movesCount < this.config.maxGameMoves) {
-			const preMove = game.getBoard().map((row) => [...row]);
+			const preMove = this.copyBoard(game.getBoard());
+			const scoreBefore = score;
+			const movesBefore = movesCount;
+			const maxTileBefore = game.getMaxTile();
 			maxTile = Math.max(maxTile, game.getMaxTile());
 
 			// Check game over
@@ -71,6 +75,24 @@ export class GameEvaluator {
 
 			if (response.error) {
 				lastError = `LLM Error: ${response.error}`;
+				steps.push({
+					stepNumber: steps.length + 1,
+					boardBefore: preMove,
+					boardAfter: this.copyBoard(game.getBoard()),
+					suggestedMove: response.completion || null,
+					reasoning: response.reasoning,
+					outcome: "llm-error",
+					message: lastError,
+					scoreBefore,
+					scoreAfter: score,
+					scoreDelta: 0,
+					movesBefore,
+					movesAfter: movesCount,
+					maxTileBefore,
+					maxTileAfter: game.getMaxTile(),
+					stuckCounter,
+					error: response.error,
+				});
 				if (this.config.visualize && onStep) {
 					onStep(preMove, score, movesCount, `❌ LLM Error: ${response.error}`);
 					await this.delay(this.config.visualizeDelayMs * 2);
@@ -81,28 +103,53 @@ export class GameEvaluator {
 			const action = response.completion;
 
 			let vizMessage = "";
+			let outcome: GameStepTrace["outcome"] = "unparsed-response";
+			let scoreDelta = 0;
 			if (action) {
 				const direction = stringToDirection(action);
 				if (direction !== null) {
-					const [changed, scoreDelta] = game.move(direction);
+					const [changed, moveScoreDelta] = game.move(direction);
+					scoreDelta = moveScoreDelta;
 
 					if (changed) {
 						score += scoreDelta;
 						movesCount++;
 						stuckCounter = 0;
+						outcome = "moved";
 						vizMessage = `↑ Move: ${action.toUpperCase()} | Score +${scoreDelta}`;
 					} else {
 						stuckCounter++;
+						outcome = "invalid-move";
 						vizMessage = `⚠️  Invalid: ${action.toUpperCase()} (Stuck: ${stuckCounter})`;
 					}
 				} else {
 					stuckCounter++;
+					outcome = "invalid-direction";
 					vizMessage = `❌ Invalid direction conversion (Stuck: ${stuckCounter})`;
 				}
 			} else {
 				stuckCounter++;
 				vizMessage = `❌ Invalid/Unparsed (Stuck: ${stuckCounter})`;
 			}
+
+			steps.push({
+				stepNumber: steps.length + 1,
+				boardBefore: preMove,
+				boardAfter: this.copyBoard(game.getBoard()),
+				suggestedMove: action || null,
+				reasoning: response.reasoning,
+				outcome,
+				message: vizMessage,
+				scoreBefore,
+				scoreAfter: score,
+				scoreDelta,
+				movesBefore,
+				movesAfter: movesCount,
+				maxTileBefore,
+				maxTileAfter: game.getMaxTile(),
+				stuckCounter,
+				error: null,
+			});
 
 			if (this.config.visualize && onStep) {
 				onStep(game.getBoard(), score, movesCount, vizMessage);
@@ -144,7 +191,12 @@ export class GameEvaluator {
 			win,
 			durationSeconds: Math.round(duration * 100) / 100,
 			error: lastError,
+			steps,
 		};
+	}
+
+	private copyBoard(board: number[][]): number[][] {
+		return board.map((row) => [...row]);
 	}
 
 	private delay(ms: number): Promise<void> {

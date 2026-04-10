@@ -13,6 +13,7 @@ export interface LLMConfig {
 
 export interface LLMResponse {
 	completion: string;
+	reasoning: string | null;
 	error: string | null;
 }
 
@@ -39,17 +40,22 @@ export class OllamaInference extends LLMInference {
 			const completion = response.move;
 
 			if (completion) {
-				return { completion, error: null };
+				return {
+					completion,
+					reasoning: response.thinking ?? null,
+					error: null,
+				};
 			} else {
 				return {
 					completion: "",
+					reasoning: response.thinking ?? null,
 					error: "Ollama returned empty response",
 				};
 			}
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : String(error);
-			return { completion: "", error: errorMessage };
+			return { completion: "", reasoning: null, error: errorMessage };
 		}
 	}
 }
@@ -78,17 +84,22 @@ export class OpenAIInference extends LLMInference {
 			const completion = response.move;
 
 			if (completion) {
-				return { completion, error: null };
+				return {
+					completion,
+					reasoning: response.thinking ?? null,
+					error: null,
+				};
 			} else {
 				return {
 					completion: "",
+					reasoning: response.thinking ?? null,
 					error: "OpenAI returned empty response",
 				};
 			}
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : String(error);
-			return { completion: "", error: errorMessage };
+			return { completion: "", reasoning: null, error: errorMessage };
 		}
 	}
 }

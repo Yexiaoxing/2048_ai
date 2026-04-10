@@ -5,7 +5,12 @@ import * as path from "node:path";
 import chalk from "chalk";
 import { type EvaluationConfig, GameEvaluator } from "./evaluator";
 import { createInference, type LLMConfig, type LLMInference } from "./llm";
-import { type GameResult, ResultsLogger } from "./logger";
+import {
+	type GameResult,
+	type GameTrace,
+	ResultsLogger,
+	TraceLogger,
+} from "./logger";
 import { calculateStats, type IGameStats, writeStatsToFile } from "./stats";
 import { clearScreen, hideCursor, showCursor, TUIRenderer } from "./tui";
 
@@ -17,6 +22,7 @@ interface CLIConfig {
 	visualizeDelayMs: number;
 	resultsFile: string;
 	statsFile: string;
+	stepTraceFile: string;
 	style: string;
 }
 
@@ -35,6 +41,7 @@ const DEFAULT_CONFIG: CLIConfig = {
 	visualizeDelayMs: 750,
 	resultsFile: "2048_evaluation_results.csv",
 	statsFile: "2048_evaluation_stats.json",
+	stepTraceFile: "2048_evaluation_steps.json",
 	style: "classic",
 };
 
@@ -48,12 +55,15 @@ function loadConfig(configPath?: string): CLIConfig {
 			const fileContent = fs.readFileSync(resolvedPath, "utf8");
 			const loaded = JSON.parse(fileContent) as Partial<CLIConfig> & {
 				statesFile?: string;
+				traceFile?: string;
 			};
 			const statsFile = loaded.statsFile ?? loaded.statesFile;
+			const stepTraceFile = loaded.stepTraceFile ?? loaded.traceFile;
 			return {
 				...DEFAULT_CONFIG,
 				...loaded,
 				...(statsFile ? { statsFile } : {}),
+				...(stepTraceFile ? { stepTraceFile } : {}),
 			};
 		} catch (error) {
 			console.error(
@@ -92,8 +102,10 @@ async function main() {
 		);
 		console.log(chalk.gray(`  Results file: ${config.resultsFile}\n`));
 		console.log(chalk.gray(`  Stats file: ${config.statsFile}\n`));
+		console.log(chalk.gray(`  Step trace file: ${config.stepTraceFile}\n`));
 
 		const logger = new ResultsLogger(config.resultsFile);
+		const traceLogger = new TraceLogger(config.stepTraceFile);
 		const evaluationConfig: EvaluationConfig = {
 			numRuns: config.numRuns,
 			maxGameMoves: config.maxGameMoves,
@@ -169,6 +181,7 @@ async function main() {
 						result.inferenceType = modelConfig.type;
 
 						logger.logResult(result);
+						traceLogger.logTrace(result);
 						runResults.push(result);
 					} catch (error) {
 						const errorMsg =
@@ -177,7 +190,7 @@ async function main() {
 							chalk.red(`\n❌ Error in game ${runId}: ${errorMsg}`),
 						);
 
-						const errorResult: GameResult = {
+						const errorResult: GameTrace = {
 							timestamp: new Date().toISOString(),
 							modelName,
 							inferenceType: modelConfig.type,
@@ -188,9 +201,11 @@ async function main() {
 							win: false,
 							durationSeconds: 0,
 							error: `Game execution error: ${errorMsg}`,
+							steps: [],
 						};
 
 						logger.logResult(errorResult);
+						traceLogger.logTrace(errorResult);
 						runResults.push(errorResult);
 					}
 				}
@@ -265,6 +280,9 @@ async function main() {
 		}
 
 		console.log(chalk.green(`\n✅ Results saved to: ${config.resultsFile}\n`));
+		console.log(
+			chalk.green(`✅ Step traces saved to: ${config.stepTraceFile}\n`),
+		);
 	} catch (error) {
 		console.error(chalk.red("Fatal error:"), error);
 		process.exit(1);

@@ -31,6 +31,7 @@ Create a JSON configuration file (see examples):
   "visualize": false,
   "visualizeDelayMs": 750,
   "resultsFile": "2048_evaluation_results.csv",
+  "stepTraceFile": "2048_evaluation_steps.json",
   "style": "classic"
 }
 ```
@@ -73,6 +74,7 @@ pnpm run start -- config.json
 | `visualizeDelayMs`  | Number  | Delay between visualization updates (ms) | `750`                                                              |
 | `resultsFile`       | String  | CSV file to log results                  | `2048_evaluation_results.csv`                                      |
 | `statsFile`         | String  | JSON file to log aggregated stats        | `2048_evaluation_stats.json`                                      |
+| `stepTraceFile`     | String  | JSON file to log per-step LLM traces     | `2048_evaluation_steps.json`                                      |
 | `style`             | String  | TUI style: `classic` or `dark`           | `classic`                                                          |
 
 ## Model Configuration Samples
@@ -127,6 +129,16 @@ Columns include:
 - `win`: Whether the model reached 2048
 - `durationSeconds`: Game duration
 - `error`: Any error message
+
+### Step Trace JSON File
+
+The step trace file contains one entry per run in a `runs` array. Each run stores the final summary plus a `steps` array with:
+
+- `boardBefore` and `boardAfter`
+- `suggestedMove`
+- `reasoning` returned by the LLM
+- `outcome` and human-readable `message`
+- score, move count, max tile, and any per-step error
 
 ## Examples
 

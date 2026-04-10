@@ -11,5 +11,6 @@
     "visualizeDelayMs": 500,
     "resultsFile": "2048_evaluation_results.csv",
     "statsFile": "2048_evaluation_stats.json",
+    "stepTraceFile": "2048_evaluation_steps.json",
     "style": "classic"
 }

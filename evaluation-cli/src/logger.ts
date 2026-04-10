@@ -17,6 +17,39 @@ export interface GameResult {
 	error: string | null;
 }
 
+export interface GameStepTrace {
+	stepNumber: number;
+	boardBefore: number[][];
+	boardAfter: number[][];
+	suggestedMove: string | null;
+	reasoning: string | null;
+	outcome:
+		| "moved"
+		| "invalid-move"
+		| "invalid-direction"
+		| "unparsed-response"
+		| "llm-error";
+	message: string;
+	scoreBefore: number;
+	scoreAfter: number;
+	scoreDelta: number;
+	movesBefore: number;
+	movesAfter: number;
+	maxTileBefore: number;
+	maxTileAfter: number;
+	stuckCounter: number;
+	error: string | null;
+}
+
+export interface GameTrace extends GameResult {
+	steps: GameStepTrace[];
+}
+
+interface TraceFileContents {
+	updatedAt: string;
+	runs: GameTrace[];
+}
+
 type CsvRecord = GameResult;
 
 const FIELDNAMES = [
@@ -95,5 +128,72 @@ export class ResultsLogger {
 
 	getFilename(): string {
 		return this.filename;
+	}
+}
+
+export class TraceLogger {
+	private filename: string;
+
+	constructor(filename: string = "2048_evaluation_steps.json") {
+		this.filename = filename;
+		this.ensureFileExists();
+	}
+
+	private ensureFileExists(): void {
+		if (!fs.existsSync(this.filename)) {
+			this.writeTraceFile({
+				updatedAt: new Date().toISOString(),
+				runs: [],
+			});
+		}
+	}
+
+	logTrace(trace: GameTrace): void {
+		try {
+			const contents = this.readTraceFile();
+			contents.updatedAt = new Date().toISOString();
+			contents.runs.push(trace);
+			this.writeTraceFile(contents);
+		} catch (error) {
+			console.error(`Error writing traces to ${this.filename}:`, error);
+		}
+	}
+
+	getFilename(): string {
+		return this.filename;
+	}
+
+	private readTraceFile(): TraceFileContents {
+		if (!fs.existsSync(this.filename)) {
+			return {
+				updatedAt: new Date().toISOString(),
+				runs: [],
+			};
+		}
+
+		const raw = fs.readFileSync(this.filename, "utf8").trim();
+		if (raw.length === 0) {
+			return {
+				updatedAt: new Date().toISOString(),
+				runs: [],
+			};
+		}
+
+		const parsed = JSON.parse(raw) as Partial<TraceFileContents>;
+		return {
+			updatedAt:
+				typeof parsed.updatedAt === "string"
+					? parsed.updatedAt
+					: new Date().toISOString(),
+			runs: Array.isArray(parsed.runs) ? parsed.runs : [],
+		};
+	}
+
+	private writeTraceFile(contents: TraceFileContents): void {
+		fs.writeFileSync(
+			this.filename,
+			`${JSON.stringify(contents, null, 2)}\n`,
+			"utf8",
+		);
 	}
 }
