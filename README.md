@@ -2,11 +2,33 @@
 
 This project is a web-based implementation of the popular game 2048, enhanced with an AI suggestion feature to help players make optimal moves.
 
+## Monorepo Layout
+
+- packages/web: React + Vite web app.
+- packages/evaluation-cli: CLI evaluator for running model-based game evaluations.
+- packages/game-logic: Shared game logic, game status/types, and AI integration utilities.
+
 ## Building the Game
 
 1. Install Devenv and Nix, then run `devenv shell` to enter the development environment.
 2. Run `pnpm install` to install dependencies.
-3. Run `pnpm run dev` to start the development server and open the game in your browser.
+3. Run `pnpm run dev` to start the web app from `packages/web`.
+
+## Common Commands
+
+- `pnpm run dev`: Run the web app.
+- `pnpm run build`: Build all workspace packages that expose a build script.
+- `pnpm run test`: Run all workspace package tests.
+- `pnpm --filter @2048/web storybook`: Run Storybook for the web package.
+- `pnpm --filter @2048/evaluation-cli start`: Run the evaluation CLI.
+
+## Shared Package Scripts
+
+From the repo root:
+
+- `pnpm --filter @2048/game-logic run typecheck`: Typecheck the shared package.
+- `pnpm --filter @2048/game-logic run build`: Generate declaration output in `packages/game-logic/dist`.
+- `pnpm --filter @2048/game-logic run test`: Run shared package tests.
 
 ## Infrastructure
 

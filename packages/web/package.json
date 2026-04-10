@@ -1,0 +1,38 @@
+{
+    "name": "@2048/web",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "NODE_OPTIONS='--max-old-space-size=4096' vite",
+        "build": "tsc -b && vite build",
+        "test": "vitest",
+        "test-ci": "vitest --run --coverage",
+        "preview": "vite preview",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build",
+        "lint": "biome check"
+    },
+    "dependencies": {
+        "@2048/game-logic": "workspace:*",
+        "@base-ui/react": "^1.3.0",
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
+        "styled-components": "^6.3.12"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "2.4.10",
+        "@chromatic-com/storybook": "^5.1.1",
+        "@storybook/addon-docs": "^10.3.4",
+        "@storybook/react-vite": "^10.3.4",
+        "@types/node": "^24.12.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.1",
+        "@vitest/coverage-v8": "^4.1.2",
+        "storybook": "^10.3.4",
+        "typescript": "~6.0.2",
+        "vite": "^8.0.1",
+        "vitest": "^4.1.2"
+    }
+}

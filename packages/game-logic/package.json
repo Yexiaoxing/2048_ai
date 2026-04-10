@@ -1,0 +1,24 @@
+{
+    "name": "@2048/game-logic",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./game-ai/*": "./src/game-ai/*.ts"
+    },
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "ollama": "^0.6.3",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@types/node": "^24.12.0",
+        "typescript": "~6.0.2",
+        "vitest": "^4.1.2"
+    }
+}

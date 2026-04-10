@@ -1,15 +1,5 @@
 {
     "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
-    "files": {
-        "includes": [
-            "src/**/*.ts",
-            "src/**/*.tsx",
-            "test/**/*.ts",
-            "test/**/*.tsx",
-            ".storybook/**/*.ts",
-            "vite.config.ts"
-        ]
-    },
     "formatter": {
         "enabled": true,
         "indentStyle": "space",
