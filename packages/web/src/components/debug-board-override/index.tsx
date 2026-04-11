@@ -32,6 +32,40 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
+    const parseBoardFromClipboard = useCallback(
+        (rawClipboardText: string): (string | number)[][] => {
+            let parsed: Array<Array<number>>;
+            try {
+                parsed = JSON.parse(rawClipboardText);
+            } catch {
+                throw new Error("Clipboard does not contain valid JSON.");
+            }
+
+            if (!Array.isArray(parsed) || parsed.length !== board.length) {
+                throw new Error(`Board must contain exactly ${board.length} rows.`);
+            }
+
+            for (const [rowIdx, row] of parsed.entries()) {
+                if (!Array.isArray(row) || row.length !== board[rowIdx].length) {
+                    throw new Error(
+                        `Row ${rowIdx + 1} must contain exactly ${board[rowIdx].length} values.`,
+                    );
+                }
+
+                for (const cell of row) {
+                    if (!Number.isInteger(cell) || cell < 0) {
+                        throw new Error(
+                            "All board values must be non-negative integers.",
+                        );
+                    }
+                }
+            }
+
+            return parsed.map((row) => row.map((val) => (val === 0 ? "" : val)));
+        },
+        [board],
+    );
+
     const handleCellChange = (row: number, col: number, value: string) => {
         const numValue = value === "" ? 0 : parseInt(value, 10);
         if (!Number.isNaN(numValue) && numValue >= 0) {
@@ -90,6 +124,23 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
         }
     }, [board]);
 
+    const handlePasteBoard = useCallback(async () => {
+        try {
+            const rawClipboardText = await navigator.clipboard.readText();
+            const parsedInputValues = parseBoardFromClipboard(rawClipboardText);
+            setInputValues(parsedInputValues);
+            setCopyStatus("Board pasted");
+            setError(null);
+        } catch (e) {
+            setCopyStatus(null);
+            if (e instanceof Error) {
+                setError(`Failed to paste board: ${e.message}`);
+                return;
+            }
+            setError("Failed to paste board from clipboard.");
+        }
+    }, [parseBoardFromClipboard]);
+
     // biome-ignore lint/correctness/useExhaustiveDependencies: By design, only want to reset on re-open
     useEffect(() => {
         // Reset debug board inputs to current board whenever debug mode is toggled on
@@ -131,7 +182,6 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
             </DebugHintText>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
-            {copyStatus && <DebugHintText>{copyStatus}</DebugHintText>}
 
             <BoardInputContainer>
                 {inputValues.map((row, rowIdx) =>
@@ -154,7 +204,10 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
                 <DebugButton onClick={handleResetToCurrentBoard}>↻ Reset</DebugButton>
                 <DebugButton onClick={handleClearBoard}>✕ Clear</DebugButton>
                 <DebugButton onClick={handleCopyBoard}>⧉ Copy Board</DebugButton>
+                <DebugButton onClick={handlePasteBoard}>⎘ Paste Board</DebugButton>
             </DebugButtonContainer>
+
+            {copyStatus && <DebugHintText>{copyStatus}</DebugHintText>}
         </DebugPanelContainer>
     );
 };
