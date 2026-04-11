@@ -27,7 +27,7 @@ const DEFAULT_CONFIG: CLIConfig = {
         {
             name: "gemma4:e4b",
             type: "ollama",
-            path: "gemma4:e4b",
+            apiModelName: "gemma4:e4b",
         },
     ],
     numRuns: 20,

@@ -261,3 +261,18 @@ export function stringToDirection(action: string): Direction | null {
             return null;
     }
 }
+
+export function directionToString(direction: Direction): string {
+    switch (direction) {
+        case Direction.Up:
+            return "Up";
+        case Direction.Down:
+            return "Down";
+        case Direction.Left:
+            return "Left";
+        case Direction.Right:
+            return "Right";
+        default:
+            return "Unknown";
+    }
+}

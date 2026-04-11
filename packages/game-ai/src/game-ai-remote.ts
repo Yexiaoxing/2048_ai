@@ -1,6 +1,6 @@
 import type { Board } from "@2048/game-logic";
 import type { IGameAiResponse } from "./game-ai.types";
-import { getGameAIMessages } from "./prompt";
+import { getGameAIMessages, getGameAIMessagesWithJSONSchemaInSystem } from "./prompt";
 import { gameAiSchema } from "./schema";
 
 const getRemoteErrorMessage = (payload: unknown): string | null => {
@@ -33,6 +33,7 @@ interface IRemoteAiConfig {
     apiEndpoint: string;
     apiSecret?: string;
     selectedRemoteModel?: string;
+    noJSONSchemaSupport?: boolean;
 }
 
 export const getRemoteAIMove = async (
@@ -52,7 +53,9 @@ export const getRemoteAIMove = async (
         headers: requestHeader,
         body: JSON.stringify({
             model: config.selectedRemoteModel || "",
-            messages: getGameAIMessages(board),
+            messages: config.noJSONSchemaSupport
+                ? getGameAIMessagesWithJSONSchemaInSystem(board)
+                : getGameAIMessages(board),
             response_format: {
                 type: "json_schema",
                 json_schema: {
@@ -64,9 +67,11 @@ export const getRemoteAIMove = async (
         }),
     });
 
+    const body = await response.text();
+
     let payload: unknown;
     try {
-        payload = await response.json();
+        payload = JSON.parse(body);
     } catch {
         throw new Error(`Remote AI returned a non-JSON response (${response.status}).`);
     }
@@ -87,7 +92,17 @@ export const getRemoteAIMove = async (
     try {
         parsedContent = JSON.parse(content);
     } catch {
-        throw new Error("Remote AI returned invalid JSON in message content.");
+        if (
+            content &&
+            ["up", "down", "left", "right", "invalid"].includes(content.trim().toLowerCase())
+        ) {
+            parsedContent = {
+                move: content.trim().toLowerCase(),
+                reason: "",
+            };
+        } else {
+            throw new Error(`Remote AI returned invalid JSON in message content.`);
+        }
     }
 
     const parsedAiResponse = gameAiSchema.safeParse(parsedContent);

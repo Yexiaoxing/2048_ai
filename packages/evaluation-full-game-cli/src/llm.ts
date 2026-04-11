@@ -2,14 +2,20 @@ import { getAIMove } from "@2048/game-ai/game-ai-local";
 import { getRemoteAIMove } from "@2048/game-ai/game-ai-remote";
 import type { Board } from "@2048/game-logic";
 
-export interface LLMConfig {
-    name: string;
-    type: "ollama" | "openai";
-    path?: string; // For Ollama
-    apiModelName?: string; // For OpenAI
-    baseUrl?: string; // For OpenAI
-    apiKey?: string; // For OpenAI
-}
+export type LLMConfig =
+    | {
+          name: string;
+          type: "ollama";
+          apiModelName: string;
+      }
+    | {
+          name: string;
+          type: "ollama" | "openai";
+          apiModelName: string;
+          baseUrl: string;
+          apiKey?: string;
+          noJSONSchemaSupport?: boolean;
+      };
 
 export interface LLMResponse {
     completion: string;
@@ -36,7 +42,7 @@ export class LLMInference {
 export class OllamaInference extends LLMInference {
     async generate(board: Board): Promise<LLMResponse> {
         try {
-            const response = await getAIMove(board, this.config.path || "");
+            const response = await getAIMove(board, this.config.apiModelName || "");
             const completion = response.move;
 
             if (completion) {
@@ -65,12 +71,13 @@ export class OpenAIInference extends LLMInference {
 
     constructor(config: LLMConfig) {
         super(config);
-        this.baseUrl = config.baseUrl || "https://api.openai.com/v1";
-        this.apiKey = config.apiKey || process.env.OPENAI_API_KEY || "";
 
-        if (!this.apiKey) {
+        if (config.type !== "openai") {
             throw new Error("OpenAI API key not provided");
         }
+
+        this.baseUrl = config.baseUrl || "https://api.openai.com/v1";
+        this.apiKey = config.apiKey || process.env.OPENAI_API_KEY || "";
     }
 
     async generate(board: Board): Promise<LLMResponse> {
@@ -109,6 +116,6 @@ export function createInference(config: LLMConfig): LLMInference {
         case "openai":
             return new OpenAIInference(config);
         default:
-            throw new Error(`Unsupported LLM type: ${config.type}`);
+            throw new Error(`Unsupported LLM type: ${config}`);
     }
 }

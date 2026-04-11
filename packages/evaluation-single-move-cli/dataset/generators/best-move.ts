@@ -32,7 +32,7 @@ const countEmpty = (board: Board): number => {
     let count = 0;
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
-            if (board[i][j] === null) count++;
+            if (board[i][j] === 0) count++;
         }
     }
     return count;
@@ -47,7 +47,7 @@ const calculateMonotonicity = (board: Board): number => {
         for (let j = 0; j < BOARD_SIZE - 1; j++) {
             const left = board[i][j];
             const right = board[i][j + 1];
-            if (left !== null && right !== null) {
+            if (left !== 0 && right !== 0) {
                 if (left < right) score += 10;
                 else if (left > right) score -= 10;
             }
@@ -59,7 +59,7 @@ const calculateMonotonicity = (board: Board): number => {
         for (let j = 0; j < BOARD_SIZE; j++) {
             const top = board[i][j];
             const bottom = board[i + 1][j];
-            if (top !== null && bottom !== null) {
+            if (top !== 0 && bottom !== 0) {
                 if (top < bottom) score += 10;
                 else if (top > bottom) score -= 10;
             }
@@ -76,18 +76,18 @@ const calculateSmoothness = (board: Board): number => {
 
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
-            if (board[i][j] === null) continue;
+            if (board[i][j] === 0) continue;
 
             const value = board[i][j] as number;
 
-            // Check right neighbor
-            if (j < BOARD_SIZE - 1 && board[i][j + 1] !== null) {
+            if (j < BOARD_SIZE - 1 && board[i][j + 1] !== 0) {
+                // Check right neighbor
                 const diff = Math.abs(Math.log2(value) - Math.log2(board[i][j + 1] as number));
                 score -= diff * 10;
             }
 
-            // Check bottom neighbor
-            if (i < BOARD_SIZE - 1 && board[i + 1][j] !== null) {
+            if (i < BOARD_SIZE - 1 && board[i + 1][j] !== 0) {
+                // Check bottom neighbor
                 const diff = Math.abs(Math.log2(value) - Math.log2(board[i + 1][j] as number));
                 score -= diff * 10;
             }
@@ -231,7 +231,7 @@ export const getMinimaxSuggestion = (board: Board, depth: number = 1): Direction
  *   sampled minimax at the same depth.
  */
 export const getExpectimaxSuggestion = (board: Board, depth: number = 3): Direction => {
-    const moves: Direction[] = [Direction.Left, Direction.Right, Direction.Up, Direction.Down];
+    const moves: Direction[] = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
     const probabilityOf2 = 0.9;
     const probabilityOf4 = 0.1;
 

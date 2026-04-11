@@ -9,7 +9,7 @@ class StubInference extends LLMInference {
         const config: LLMConfig = {
             name: "stub-model",
             type: "ollama",
-            path: "stub-model",
+            apiModelName: "stub-model",
         };
         super(config);
         this.responses = responses;

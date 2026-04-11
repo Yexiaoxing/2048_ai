@@ -4,18 +4,24 @@ import fs from "node:fs";
 import path from "node:path";
 import { getAIMove } from "@2048/game-ai/game-ai-local";
 import { getRemoteAIMove } from "@2048/game-ai/game-ai-remote";
-import { type Board, Direction, stringToDirection } from "@2048/game-logic";
+import { type Board, Direction, directionToString, stringToDirection } from "@2048/game-logic";
 import chalk from "chalk";
 import cliProgress from "cli-progress";
 
-interface ModelConfig {
-    name: string;
-    type: "ollama" | "openai";
-    path?: string;
-    apiModelName?: string;
-    baseUrl?: string;
-    apiKey?: string;
-}
+type ModelConfig =
+    | {
+          name: string;
+          type: "ollama";
+          apiModelName: string;
+      }
+    | {
+          name: string;
+          type: "ollama" | "openai";
+          apiModelName: string;
+          baseUrl: string;
+          apiKey?: string;
+          noJSONSchemaSupport?: boolean;
+      };
 
 interface EvaluatorConfig {
     models: ModelConfig[];
@@ -33,6 +39,7 @@ interface DatasetRow {
 
 interface ExampleResult {
     index: number;
+    board: Board;
     expectedMove: string;
     aiMove: string;
     aiThinking?: string;
@@ -56,7 +63,7 @@ const DEFAULT_CONFIG: EvaluatorConfig = {
         {
             name: "gemma4:e4b",
             type: "ollama",
-            path: "gemma4:e4b",
+            apiModelName: "gemma4:e4b",
         },
     ],
     datasetPath: "dataset/output/game_states.json",
@@ -64,21 +71,6 @@ const DEFAULT_CONFIG: EvaluatorConfig = {
     limit: 200,
     shuffle: false,
     resultsFile: "results/single_move_eval_results.json",
-};
-
-const directionToString = (direction: Direction): string => {
-    switch (direction) {
-        case Direction.Up:
-            return "up";
-        case Direction.Down:
-            return "down";
-        case Direction.Left:
-            return "left";
-        case Direction.Right:
-            return "right";
-        default:
-            return "invalid";
-    }
 };
 
 const parseExpectedDirection = (value: unknown): Direction | null => {
@@ -176,7 +168,7 @@ const queryModel = async (
 ): Promise<{ move: string; reason: string | null; error: string | null }> => {
     try {
         if (model.type === "ollama") {
-            const response = await getAIMove(board, model.path || model.name);
+            const response = await getAIMove(board, model.apiModelName);
             return { move: response.move, reason: response.thinking || "", error: null };
         }
 
@@ -189,13 +181,14 @@ const queryModel = async (
             };
         }
 
-        const baseUrl = model.baseUrl || "https://api.openai.com/v1";
+        const baseUrl = model.baseUrl;
         const apiEndpoint = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
 
         const response = await getRemoteAIMove(board, {
             apiEndpoint,
             apiSecret: apiKey,
             selectedRemoteModel: model.apiModelName,
+            noJSONSchemaSupport: model.noJSONSchemaSupport || false,
         });
 
         return { move: response.move, reason: response.thinking || "", error: null };
@@ -241,6 +234,7 @@ const evaluateModel = async (
             failures++;
             examples.push({
                 index,
+                board: row.board,
                 expectedMove: "invalid",
                 aiMove: "invalid",
                 aligned: false,
@@ -261,6 +255,7 @@ const evaluateModel = async (
             failures++;
             examples.push({
                 index,
+                board: row.board,
                 expectedMove,
                 aiMove: "invalid",
                 aligned: false,
@@ -279,6 +274,7 @@ const evaluateModel = async (
             failures++;
             examples.push({
                 index,
+                board: row.board,
                 expectedMove,
                 aiMove: response.move,
                 aligned: false,
@@ -302,6 +298,7 @@ const evaluateModel = async (
         evaluated++;
         examples.push({
             index,
+            board: row.board,
             expectedMove,
             aiMove,
             aligned: isAligned,
