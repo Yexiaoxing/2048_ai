@@ -37,7 +37,14 @@ describe("game-ai-local", () => {
     it("parses valid AI move response", async () => {
         chatMock.mockResolvedValue({
             message: {
-                content: JSON.stringify({ move: "left", reason: "merge now" }),
+                content: JSON.stringify({
+                    move: "left",
+                    reason: "merge now",
+                    leftChange: "",
+                    rightChange: "",
+                    upChange: "",
+                    downChange: "",
+                }),
             },
         });
 

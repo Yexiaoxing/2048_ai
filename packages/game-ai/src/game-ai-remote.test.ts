@@ -15,19 +15,28 @@ afterEach(() => {
 
 describe("getRemoteAIMove", () => {
     it("returns parsed move and reason when remote response is valid", async () => {
+        const resp = {
+            choices: [
+                {
+                    message: {
+                        content: JSON.stringify({
+                            move: "left",
+                            reason: "merge tiles",
+                            leftChange: "",
+                            rightChange: "",
+                            upChange: "",
+                            downChange: "",
+                        }),
+                    },
+                },
+            ],
+        };
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: true,
             status: 200,
             statusText: "OK",
-            json: async () => ({
-                choices: [
-                    {
-                        message: {
-                            content: JSON.stringify({ move: "left", reason: "merge tiles" }),
-                        },
-                    },
-                ],
-            }),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         const result = await getRemoteAIMove(board, {
@@ -47,6 +56,7 @@ describe("getRemoteAIMove", () => {
             json: async () => {
                 throw new Error("invalid json");
             },
+            text: async () => "invalid json",
         } as unknown as Response);
 
         await expect(
@@ -57,15 +67,18 @@ describe("getRemoteAIMove", () => {
     });
 
     it("throws provider error details when request fails", async () => {
+        const resp = {
+            error: {
+                message: "Invalid API key",
+            },
+        };
+
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: false,
             status: 401,
             statusText: "Unauthorized",
-            json: async () => ({
-                error: {
-                    message: "Invalid API key",
-                },
-            }),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         await expect(
@@ -76,13 +89,16 @@ describe("getRemoteAIMove", () => {
     });
 
     it("uses top-level message when error payload has no nested object", async () => {
+        const resp = {
+            message: "Rate limit exceeded",
+        };
+
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: false,
             status: 429,
             statusText: "Too Many Requests",
-            json: async () => ({
-                message: "Rate limit exceeded",
-            }),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         await expect(
@@ -93,11 +109,13 @@ describe("getRemoteAIMove", () => {
     });
 
     it("falls back to status text when payload has no message", async () => {
+        const resp = {};
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: false,
             status: 503,
             statusText: "Service Unavailable",
-            json: async () => ({}),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         await expect(
@@ -108,13 +126,15 @@ describe("getRemoteAIMove", () => {
     });
 
     it("throws when success response has missing message content", async () => {
+        const resp = {
+            choices: [],
+        };
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: true,
             status: 200,
             statusText: "OK",
-            json: async () => ({
-                choices: [],
-            }),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         await expect(
@@ -125,19 +145,21 @@ describe("getRemoteAIMove", () => {
     });
 
     it("throws when message content is not valid JSON", async () => {
+        const resp = {
+            choices: [
+                {
+                    message: {
+                        content: "this is not json",
+                    },
+                },
+            ],
+        };
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: true,
             status: 200,
             statusText: "OK",
-            json: async () => ({
-                choices: [
-                    {
-                        message: {
-                            content: "this is not json",
-                        },
-                    },
-                ],
-            }),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         await expect(
@@ -148,19 +170,22 @@ describe("getRemoteAIMove", () => {
     });
 
     it("throws when parsed content does not match expected schema", async () => {
+        const resp = {
+            choices: [
+                {
+                    message: {
+                        content: JSON.stringify({ move: "diagonal", reason: "bad move" }),
+                    },
+                },
+            ],
+        };
+
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             ok: true,
             status: 200,
             statusText: "OK",
-            json: async () => ({
-                choices: [
-                    {
-                        message: {
-                            content: JSON.stringify({ move: "diagonal", reason: "bad move" }),
-                        },
-                    },
-                ],
-            }),
+            json: async () => resp,
+            text: async () => JSON.stringify(resp),
         } as Response);
 
         await expect(
