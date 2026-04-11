@@ -1,11 +1,29 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: follow the same console.log type */
+let shouldLogToConsole = false;
+
+export const enableConsoleLogger = () => {
+    shouldLogToConsole = true;
+};
+
 export const logger = {
-    info: (message: string) => {
-        console.log(`[INFO] ${message}`);
+    debug: (message: string, ...optionalParams: any[]) => {
+        if (shouldLogToConsole) {
+            console.debug(`[DEBUG] ${message}`, ...optionalParams);
+        }
     },
-    warn: (message: string) => {
-        console.warn(`[WARN] ${message}`);
+    info: (message: string, ...optionalParams: any[]) => {
+        if (shouldLogToConsole) {
+            console.log(`[INFO] ${message}`, ...optionalParams);
+        }
     },
-    error: (message: string) => {
-        console.error(`[ERROR] ${message}`);
+    warn: (message: string, ...optionalParams: any[]) => {
+        if (shouldLogToConsole) {
+            console.warn(`[WARN] ${message}`, ...optionalParams);
+        }
+    },
+    error: (message: string, ...optionalParams: any[]) => {
+        if (shouldLogToConsole) {
+            console.error(`[ERROR] ${message}`, ...optionalParams);
+        }
     },
 };

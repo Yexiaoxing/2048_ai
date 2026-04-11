@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Game } from "./components/game";
+import { enableConsoleLogger } from "@2048/logger";
 
 const StyledApp = styled.div`
     width: 100%;
@@ -8,6 +9,8 @@ const StyledApp = styled.div`
     justify-content: center;
     align-items: center;
 `;
+
+enableConsoleLogger();
 
 function App() {
     return (
