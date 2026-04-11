@@ -73,7 +73,7 @@
                     "minLength": 1,
                     "description": "Model name sent to the OpenAI-compatible endpoint."
                 },
-                "baseUrl": {
+                "apiEndpoint": {
                     "type": "string",
                     "format": "uri",
                     "description": "OpenAI-compatible base URL (default: https://api.openai.com/v1)."
@@ -105,7 +105,7 @@
                             "anyOf": [
                                 {
                                     "required": [
-                                        "baseUrl"
+                                        "apiEndpoint"
                                     ]
                                 },
                                 {

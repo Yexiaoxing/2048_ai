@@ -213,10 +213,6 @@ async function main() {
                     );
                     console.log(chalk.gray(`  Win Rate (≥2048): ${stats.winRate.toFixed(1)}%`));
                     console.log(chalk.gray(`  Avg Moves: ${stats.avgMoves.toFixed(1)}`));
-
-                    writeStatsToFile(stats, config.statsFile);
-
-                    console.log(chalk.green(`\n✅ Stats saved to: ${config.statsFile}`));
                 } else {
                     console.log(chalk.red("  ❌ No successful runs"));
                     modelSummary[modelName] = { error: "No successful runs" };
@@ -251,6 +247,9 @@ async function main() {
                 console.log(chalk.gray(`    Win Rate: ${stats.winRate.toFixed(1)}%`));
             }
         }
+
+        writeStatsToFile(modelSummary, config.statsFile);
+        console.log(chalk.green(`\n✅ Stats saved to: ${config.statsFile}`));
 
         console.log(chalk.green(`\n✅ Results saved to: ${config.resultsFile}\n`));
         console.log(chalk.green(`✅ Step traces saved to: ${config.stepTraceFile}\n`));

@@ -49,7 +49,7 @@ export function calculateStats(results: GameResult[]): IGameStats | null {
 }
 
 export function writeStatsToFile(
-    stats: ReturnType<typeof calculateStats>,
+    stats: Record<string, IGameStats>,
     filename: string = "latest_game_stats.json",
 ): void {
     try {

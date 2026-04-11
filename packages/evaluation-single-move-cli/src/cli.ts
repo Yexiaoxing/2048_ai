@@ -16,9 +16,9 @@ type ModelConfig =
       }
     | {
           name: string;
-          type: "ollama" | "openai";
+          type: "openai";
           apiModelName: string;
-          baseUrl: string;
+          apiEndpoint: string;
           apiKey?: string;
           noJSONSchemaSupport?: boolean;
       };
@@ -182,7 +182,7 @@ const queryModel = async (
         }
 
         const response = await getRemoteAIMove(board, {
-            apiEndpoint: model.baseUrl,
+            apiEndpoint: model.apiEndpoint,
             apiSecret: apiKey,
             selectedRemoteModel: model.apiModelName,
             noJSONSchemaSupport: model.noJSONSchemaSupport || false,

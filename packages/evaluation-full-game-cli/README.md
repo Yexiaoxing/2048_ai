@@ -36,7 +36,7 @@ Create a JSON configuration file (see examples):
       "name": "GPT-4o-Mini",
       "type": "openai",
       "apiModelName": "gpt-4o-mini",
-      "baseUrl": "https://api.openai.com/v1/chat/completions",
+      "apiEndpoint": "https://api.openai.com/v1/chat/completions",
       "apiKey": "YOUR_API_KEY"
     }
   ],
@@ -92,7 +92,7 @@ pnpm run start -- config.json
   "name": "Model Name",
   "type": "openai",
   "apiModelName": "model-id-in-api",
-  "baseUrl": "https://api.example.com/v1/chat/completions",
+  "apiEndpoint": "https://api.example.com/v1/chat/completions",
   "apiKey": "sk-..." // or set OPENAI_API_KEY env var
 }
 ```

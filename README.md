@@ -7,7 +7,8 @@ This project is a web-based implementation of the popular game 2048, enhanced wi
 ## Monorepo Layout
 
 - packages/web: React + Vite web app.
-- packages/evaluation-cli: CLI evaluator for running model-based game evaluations.
+- packages/evaluation-full-game-cli: CLI evaluator for full-game model performance.
+- packages/evaluation-single-move-cli: CLI evaluator for board-by-board move alignment.
 - packages/game-logic: Shared game logic, game status/types, and AI integration utilities.
 
 ## Building the Game
@@ -76,8 +77,8 @@ This project contains tools and scripts for evaluating the performance of LLM ag
 
 ## Full Game Evaluation with TUI Visualization
 
-To run the full game evaluation with TUI visualization, check the README [here](../packages/evaluation-full-game-cli/README.md) for detailed instructions and examples.
+To run the full game evaluation with TUI visualization, see the [evaluation-full-game-cli README](packages/evaluation-full-game-cli/README.md) for detailed instructions and examples.
 
 ## Single Move Evaluation
 
-To run the single move evaluation, check the README [here](../packages/evaluation-single-move-cli/README.md) for detailed instructions and examples.
+To run the single move evaluation, see the [evaluation-single-move-cli README](packages/evaluation-single-move-cli/README.md) for detailed instructions and examples.

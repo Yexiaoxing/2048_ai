@@ -10,9 +10,9 @@ export type LLMConfig =
       }
     | {
           name: string;
-          type: "ollama" | "openai";
+          type: "openai";
           apiModelName: string;
-          baseUrl: string;
+          apiEndpoint: string;
           apiKey?: string;
           noJSONSchemaSupport?: boolean;
       };
@@ -66,7 +66,7 @@ export class OllamaInference extends LLMInference {
 }
 
 export class OpenAIInference extends LLMInference {
-    private baseUrl: string;
+    private apiEndpoint: string;
     private apiKey: string;
 
     constructor(config: LLMConfig) {
@@ -76,16 +76,21 @@ export class OpenAIInference extends LLMInference {
             throw new Error("OpenAI API key not provided");
         }
 
-        this.baseUrl = config.baseUrl || "https://api.openai.com/v1/chat/completions";
+        this.apiEndpoint = config.apiEndpoint || "https://api.openai.com/v1/chat/completions";
         this.apiKey = config.apiKey || process.env.OPENAI_API_KEY || "";
     }
 
     async generate(board: Board): Promise<LLMResponse> {
+        if (this.config.type !== "openai") {
+            throw new Error("OpenAI API key not provided");
+        }
+
         try {
             const response = await getRemoteAIMove(board, {
-                apiEndpoint: this.baseUrl,
+                apiEndpoint: this.apiEndpoint,
                 apiSecret: this.apiKey,
                 selectedRemoteModel: this.config.apiModelName,
+                noJSONSchemaSupport: this.config.noJSONSchemaSupport || false,
             });
             const completion = response.move;
 

@@ -1,5 +1,5 @@
 {
-    "name": "@2048/evaluation-full-game-cli",
+    "name": "@2048/evaluation-single-move-cli",
     "version": "1.0.0",
     "description": "CLI tool for evaluating LLM agents playing 2048",
     "main": "src/cli.ts",
