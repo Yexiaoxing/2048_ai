@@ -11,3 +11,7 @@ node_modules/
 .idea/
 
 results/
+
+config.ollama.json
+config.openai.json
+config.ollama.visualize.json

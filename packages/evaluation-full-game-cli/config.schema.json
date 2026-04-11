@@ -90,15 +90,10 @@
                     "type": "string",
                     "enum": ["ollama", "openai"]
                 },
-                "path": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Ollama model path/tag. If omitted, name is used."
-                },
                 "apiModelName": {
                     "type": "string",
                     "minLength": 1,
-                    "description": "Remote model name sent to the OpenAI-compatible endpoint."
+                    "description": "Model name sent to the OpenAI-compatible endpoint."
                 },
                 "baseUrl": {
                     "type": "string",
@@ -109,6 +104,10 @@
                     "type": "string",
                     "minLength": 1,
                     "description": "API key. Optional if OPENAI_API_KEY environment variable is set."
+                },
+                "noJSONSchemaSupport": {
+                    "type": "boolean",
+                    "description": "Set to true if the model/endpoint does not support the JSON schema response format."
                 }
             },
             "allOf": [
@@ -120,20 +119,19 @@
                     "then": {
                         "not": {
                             "anyOf": [
-                                { "required": ["apiModelName"] },
                                 { "required": ["baseUrl"] },
-                                { "required": ["apiKey"] }
+                                {
+                                    "required": [
+                                        "apiKey"
+                                    ]
+                                },
+                                {
+                                    "required": [
+                                        "noJSONSchemaSupport"
+                                    ]
+                                }
                             ]
                         }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": { "type": { "const": "openai" } },
-                        "required": ["type"]
-                    },
-                    "then": {
-                        "not": { "required": ["path"] }
                     }
                 }
             ]
