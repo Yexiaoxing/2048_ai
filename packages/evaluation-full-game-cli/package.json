@@ -4,7 +4,8 @@
     "description": "CLI tool for evaluating LLM agents playing 2048",
     "main": "src/cli.ts",
     "scripts": {
-        "start": "tsx src/cli.ts"
+        "start": "tsx src/cli.ts",
+        "test": "vitest"
     },
     "dependencies": {
         "@2048/game-ai": "workspace:*",
