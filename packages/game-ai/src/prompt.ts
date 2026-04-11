@@ -75,6 +75,10 @@ ${system}
 You should respond in the following JSON format:
 {
     "move": "up" | "down" | "left" | "right" | "invalid",
+    "leftChange": string, // A description of how the board will change after moving left.
+    "rightChange": string, // A description of how the board will change after moving right.
+    "upChange": string, // A description of how the board will change after moving up.
+    "downChange": string, // A description of how the board will change after moving down.
     "reason": string // A brief explanation of why you chose this move. If invalid, explain why there are no valid moves.
 }
 `,

@@ -99,6 +99,10 @@ export const getRemoteAIMove = async (
             parsedContent = {
                 move: content.trim().toLowerCase(),
                 reason: "",
+                leftChange: "",
+                rightChange: "",
+                upChange: "",
+                downChange: "",
             };
         } else {
             throw new Error(`Remote AI returned invalid JSON in message content.`);
@@ -115,6 +119,6 @@ export const getRemoteAIMove = async (
     }
 
     throw new Error(
-        `Remote AI response schema validation failed: ${parsedAiResponse.error.message}`,
+        `Remote AI response schema validation failed: ${parsedAiResponse.error.message}. Received content: ${JSON.stringify(parsedContent)}`,
     );
 };
