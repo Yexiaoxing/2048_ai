@@ -76,14 +76,14 @@ export class OpenAIInference extends LLMInference {
             throw new Error("OpenAI API key not provided");
         }
 
-        this.baseUrl = config.baseUrl || "https://api.openai.com/v1";
+        this.baseUrl = config.baseUrl || "https://api.openai.com/v1/chat/completions";
         this.apiKey = config.apiKey || process.env.OPENAI_API_KEY || "";
     }
 
     async generate(board: Board): Promise<LLMResponse> {
         try {
             const response = await getRemoteAIMove(board, {
-                apiEndpoint: `${this.baseUrl}/chat/completions`,
+                apiEndpoint: this.baseUrl,
                 apiSecret: this.apiKey,
                 selectedRemoteModel: this.config.apiModelName,
             });

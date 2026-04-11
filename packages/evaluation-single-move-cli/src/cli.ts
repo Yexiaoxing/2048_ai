@@ -181,11 +181,8 @@ const queryModel = async (
             };
         }
 
-        const baseUrl = model.baseUrl;
-        const apiEndpoint = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
-
         const response = await getRemoteAIMove(board, {
-            apiEndpoint,
+            apiEndpoint: model.baseUrl,
             apiSecret: apiKey,
             selectedRemoteModel: model.apiModelName,
             noJSONSchemaSupport: model.noJSONSchemaSupport || false,
