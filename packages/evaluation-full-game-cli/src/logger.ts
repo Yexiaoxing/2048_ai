@@ -3,6 +3,7 @@
  */
 
 import fs from "node:fs";
+import path from "node:path";
 
 export interface GameResult {
     timestamp: string;
@@ -75,6 +76,10 @@ export class ResultsLogger {
     private ensureFileExists(): void {
         if (!fs.existsSync(this.filename)) {
             const headerLine = `${FIELDNAMES.join(",")}\n`;
+            const folder = path.dirname(this.filename);
+            if (folder && !fs.existsSync(folder)) {
+                fs.mkdirSync(folder, { recursive: true });
+            }
             fs.writeFileSync(this.filename, headerLine, "utf8");
         }
     }
