@@ -61,7 +61,7 @@ Supported fields:
       "name": "GPT-4o-Mini",
       "type": "openai",
       "apiModelName": "gpt-4o-mini",
-      "baseUrl": "https://api.openai.com/v1",
+      "baseUrl": "https://api.openai.com/v1/chat/completions",
       "apiKey": "YOUR_OPENAI_API_KEY"
     }
   ],
