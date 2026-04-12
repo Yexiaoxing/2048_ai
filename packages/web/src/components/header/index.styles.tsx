@@ -21,4 +21,4 @@ export const GameHeader = styled.h1`
     color: #776e65;
 
     margin: 0;
-}`;
+`;

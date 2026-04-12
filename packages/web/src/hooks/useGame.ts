@@ -4,12 +4,12 @@ import {
     GameStatus,
     getGameStatus,
     getInitialBoard,
+    getRandomInteger,
     isBoardChanged,
     moveBoard,
     spawnTile,
 } from "@2048/game-logic";
 import { useCallback, useState } from "react";
-import { getRandomInteger } from "../utils/random";
 
 export const useGame = () => {
     const [score, setScore] = useState(0);

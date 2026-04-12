@@ -120,19 +120,13 @@
                         "not": {
                             "anyOf": [
                                 {
-                                    "required": [
-                                        "apiEndpoint"
-                                    ]
+                                    "required": ["apiEndpoint"]
                                 },
                                 {
-                                    "required": [
-                                        "apiKey"
-                                    ]
+                                    "required": ["apiKey"]
                                 },
                                 {
-                                    "required": [
-                                        "noJSONSchemaSupport"
-                                    ]
+                                    "required": ["noJSONSchemaSupport"]
                                 }
                             ]
                         }

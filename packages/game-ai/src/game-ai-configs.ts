@@ -110,6 +110,7 @@ function isIndexedDBAvailable(): boolean {
 }
 
 class AIConfigStore {
+    // public for testing purposes
     public _storage: ConfigStorage;
 
     constructor() {

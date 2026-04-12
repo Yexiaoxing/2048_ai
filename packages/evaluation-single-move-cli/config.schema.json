@@ -51,10 +51,7 @@
         "modelConfig": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-                "name",
-                "type"
-            ],
+            "required": ["name", "type"],
             "properties": {
                 "name": {
                     "type": "string",
@@ -63,10 +60,7 @@
                 },
                 "type": {
                     "type": "string",
-                    "enum": [
-                        "ollama",
-                        "openai"
-                    ]
+                    "enum": ["ollama", "openai"]
                 },
                 "apiModelName": {
                     "type": "string",
@@ -96,27 +90,19 @@
                                 "const": "ollama"
                             }
                         },
-                        "required": [
-                            "type"
-                        ]
+                        "required": ["type"]
                     },
                     "then": {
                         "not": {
                             "anyOf": [
                                 {
-                                    "required": [
-                                        "apiEndpoint"
-                                    ]
+                                    "required": ["apiEndpoint"]
                                 },
                                 {
-                                    "required": [
-                                        "apiKey"
-                                    ]
+                                    "required": ["apiKey"]
                                 },
                                 {
-                                    "required": [
-                                        "noJSONSchemaSupport"
-                                    ]
+                                    "required": ["noJSONSchemaSupport"]
                                 }
                             ]
                         }
