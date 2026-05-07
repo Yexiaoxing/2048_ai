@@ -31,5 +31,6 @@ export const Default: Story = {
     args: {
         score: 2048,
         moves: 32,
+        bestScore: 1024,
     },
 };
