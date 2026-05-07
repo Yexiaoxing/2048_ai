@@ -1,6 +1,7 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import type { Board } from "@2048/game-logic";
+import { OBSTACLE_TILE, type Board } from "@2048/game-logic";
+import { useObstacleTileContext } from "../../contexts/obstacle-tile-context";
 import {
     BoardInputContainer,
     CellInput,
@@ -11,6 +12,8 @@ import {
     DebugPanelTitle,
     DebugToggleButton,
     ErrorMessage,
+    ObstacleToggleContainer,
+    ObstacleToggleInput,
 } from "./index.styles";
 
 interface IDebugBoardOverrideProps {
@@ -26,6 +29,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
     isDebugMode,
     onToggleDebugMode,
 }) => {
+    const { isObstacleTileEnabled, setIsObstacleTileEnabled } = useObstacleTileContext();
     const [inputValues, setInputValues] = useState<(string | number)[][]>(
         board.map((row) => row.map((val) => (val === 0 ? "" : val))),
     );
@@ -33,7 +37,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
     const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
     const parseBoardFromClipboard = useCallback(
-        (rawClipboardText: string): (string | number)[][] => {
+        (rawClipboardText: string, allowObstacleTile: boolean): (string | number)[][] => {
             let parsed: Array<Array<number>>;
             try {
                 parsed = JSON.parse(rawClipboardText);
@@ -53,9 +57,12 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
                 }
 
                 for (const cell of row) {
-                    if (!Number.isInteger(cell) || cell < 0) {
+                    const isAllowedObstacleTile = allowObstacleTile && cell === OBSTACLE_TILE;
+                    if (!Number.isInteger(cell) || (!isAllowedObstacleTile && cell < 0)) {
                         throw new Error(
-                            "All board values must be non-negative integers.",
+                            allowObstacleTile
+                                ? `All board values must be non-negative integers or ${OBSTACLE_TILE} for obstacle tiles.`
+                                : "All board values must be non-negative integers.",
                         );
                     }
                 }
@@ -68,7 +75,8 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
 
     const handleCellChange = (row: number, col: number, value: string) => {
         const numValue = value === "" ? 0 : parseInt(value, 10);
-        if (!Number.isNaN(numValue) && numValue >= 0) {
+        const isAllowedObstacleTile = isObstacleTileEnabled && numValue === OBSTACLE_TILE;
+        if (!Number.isNaN(numValue) && (numValue >= 0 || isAllowedObstacleTile)) {
             const newValues = inputValues.map((r, rIdx) =>
                 rIdx === row ? r.map((v, cIdx) => (cIdx === col ? value : v)) : r,
             );
@@ -85,6 +93,9 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
         const oddNumbers: number[] = [];
         for (const row of newBoard) {
             for (const val of row) {
+                if (isObstacleTileEnabled && val === OBSTACLE_TILE) {
+                    continue;
+                }
                 if (val > 0 && val % 2 !== 0) {
                     oddNumbers.push(val);
                 }
@@ -99,9 +110,26 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
             return;
         }
 
+        if (!isObstacleTileEnabled) {
+            const obstacleCoordinates: string[] = [];
+            for (const [rowIdx, row] of newBoard.entries()) {
+                for (const [colIdx, val] of row.entries()) {
+                    if (val === OBSTACLE_TILE) {
+                        obstacleCoordinates.push(`[${rowIdx}, ${colIdx}]`);
+                    }
+                }
+            }
+            if (obstacleCoordinates.length > 0) {
+                setError(
+                    "Obstacle tiles are disabled. Enable the obstacle option before applying a board with -2 values.",
+                );
+                return;
+            }
+        }
+
         setError(null);
         onOverride(newBoard);
-    }, [inputValues, onOverride]);
+    }, [inputValues, isObstacleTileEnabled, onOverride]);
 
     const handleResetToCurrentBoard = useCallback(() => {
         setInputValues(board.map((row) => row.map((val) => (val === 0 ? "" : val))));
@@ -127,7 +155,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
     const handlePasteBoard = useCallback(async () => {
         try {
             const rawClipboardText = await navigator.clipboard.readText();
-            const parsedInputValues = parseBoardFromClipboard(rawClipboardText);
+            const parsedInputValues = parseBoardFromClipboard(rawClipboardText, isObstacleTileEnabled);
             setInputValues(parsedInputValues);
             setCopyStatus("Board pasted");
             setError(null);
@@ -139,7 +167,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
             }
             setError("Failed to paste board from clipboard.");
         }
-    }, [parseBoardFromClipboard]);
+    }, [isObstacleTileEnabled, parseBoardFromClipboard]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: By design, only want to reset on re-open
     useEffect(() => {
@@ -181,6 +209,15 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
                 Press Ctrl+Shift+D (or Cmd+Shift+D on Mac) to toggle debug mode anytime
             </DebugHintText>
 
+            <ObstacleToggleContainer>
+                <ObstacleToggleInput
+                    type="checkbox"
+                    checked={isObstacleTileEnabled}
+                    onChange={(e) => setIsObstacleTileEnabled(e.target.checked)}
+                />
+                Enable obstacle tile ({OBSTACLE_TILE})
+            </ObstacleToggleContainer>
+
             {error && <ErrorMessage>{error}</ErrorMessage>}
 
             <BoardInputContainer>
@@ -190,7 +227,7 @@ export const DebugBoardOverride: React.FC<IDebugBoardOverrideProps> = ({
                             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation> only possible key
                             key={`${rowIdx}-${colIdx}`}
                             type="number"
-                            min="0"
+                            min={isObstacleTileEnabled ? `${OBSTACLE_TILE}` : "0"}
                             value={inputValues[rowIdx][colIdx]}
                             onChange={(e) => handleCellChange(rowIdx, colIdx, e.target.value)}
                             inputMode="numeric"

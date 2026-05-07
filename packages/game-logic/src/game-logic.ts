@@ -1,17 +1,33 @@
 import { logger } from "@2048/logger";
-import { type Board, type Coordinates, Direction } from "./game-types";
+import { type Board, type Coordinates, Direction, OBSTACLE_TILE } from "./game-types";
 import { getRandomInteger } from "./utils/random";
 
 export const BOARD_SIZE = 4;
 const NEW_TILE_PROBABILITY = 0.9; // 90% chance of 2, 10% chance of 4
 
-export const getInitialBoard = (spawnCount: number): Board => {
+export const generateObstacleTile = (board: Board): Board => {
+    const emptyCells = getEmptyCells(board);
+
+    if (emptyCells.length === 0) {
+        return board;
+    }
+
+    const [row, col] = emptyCells[getRandomInteger(0, emptyCells.length - 1)];
+    board[row][col] = OBSTACLE_TILE;
+    return board;
+};
+
+export const getInitialBoard = (spawnCount: number, addObstracleTile: boolean = false): Board => {
     let board: Board = Array(BOARD_SIZE)
         .fill(0)
         .map(() => Array(BOARD_SIZE).fill(0));
 
     for (let i = 0; i < spawnCount; i++) {
         board = spawnTile(board, 1); // Spawn only '2' tiles for the initial board
+    }
+
+    if (addObstracleTile) {
+        board = generateObstacleTile(board);
     }
 
     return board;
@@ -70,9 +86,22 @@ export const spawnTile = (board: Board, smallTileProbability = NEW_TILE_PROBABIL
  * @param row An array representing a single row of the board
  * @returns A new array with non-zero values compressed to the left
  */
-export const compressRow = (row: number[]): number[] => {
+export const compressRow = (row: number[], rowLength: number = BOARD_SIZE): number[] => {
+    if (row.some((val) => val === OBSTACLE_TILE)) {
+        const obstacleIndex = row.indexOf(OBSTACLE_TILE);
+
+        const leftPart = row.slice(0, obstacleIndex);
+        const rightPart = row.slice(obstacleIndex + 1);
+
+        return [
+            ...compressRow(leftPart, leftPart.length),
+            OBSTACLE_TILE,
+            ...compressRow(rightPart, rightPart.length),
+        ];
+    }
+
     const filtered = row.filter((val) => val !== 0);
-    return [...filtered, ...Array(BOARD_SIZE - filtered.length).fill(0)];
+    return [...filtered, ...Array(rowLength - filtered.length).fill(0)];
 };
 
 /**

@@ -1,4 +1,7 @@
-export const CellColors: Record<number, string> = {
+import { OBSTACLE_TILE } from "@2048/game-logic";
+
+export const CellColors: Record<number | typeof OBSTACLE_TILE, string> = {
+    [OBSTACLE_TILE]: "#ff0000",
     0: "#cdc1b4",
     2: "#eee4da",
     4: "#ede0c8",
@@ -13,7 +16,8 @@ export const CellColors: Record<number, string> = {
     2048: "#edc22e",
 };
 
-export const CellTextColors: Record<number, string> = {
+export const CellTextColors: Record<number | typeof OBSTACLE_TILE, string> = {
+    [OBSTACLE_TILE]: "#000000",
     0: "transparent",
     2: "#776e65",
     4: "#776e65",
@@ -28,7 +32,8 @@ export const CellTextColors: Record<number, string> = {
     2048: "#f9f6f2",
 };
 
-export const CellFontSizes: Record<number, string> = {
+export const CellFontSizes: Record<number | typeof OBSTACLE_TILE, string> = {
+    [OBSTACLE_TILE]: "55px",
     0: "55px",
     2: "55px",
     4: "55px",

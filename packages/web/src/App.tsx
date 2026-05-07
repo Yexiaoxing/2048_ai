@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Game } from "./components/game";
 import { enableConsoleLogger } from "@2048/logger";
+import { ObstacleTileProvider } from "./contexts/obstacle-tile-context";
 
 const StyledApp = styled.div`
     width: 100%;
@@ -14,9 +15,11 @@ enableConsoleLogger();
 
 function App() {
     return (
-        <StyledApp>
-            <Game />
-        </StyledApp>
+        <ObstacleTileProvider>
+            <StyledApp>
+                <Game />
+            </StyledApp>
+        </ObstacleTileProvider>
     );
 }
 

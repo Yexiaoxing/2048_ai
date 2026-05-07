@@ -12,6 +12,7 @@ import {
     moveUp,
     spawnTile,
 } from "./game-logic";
+import { OBSTACLE_TILE } from "./game-types";
 
 describe("Game Logic", () => {
     describe("getInitialBoard", () => {
@@ -31,6 +32,12 @@ describe("Game Logic", () => {
             const board = getInitialBoard(spawnCount);
             const emptyCells = getEmptyCells(board);
             expect(emptyCells).toHaveLength(16 - spawnCount);
+        });
+
+        it("should create a obstacle tile if addObstracleTile is true", () => {
+            const board = getInitialBoard(0, true);
+
+            expect(board.find((row) => row.find((cell) => cell === OBSTACLE_TILE))).toBeDefined();
         });
     });
 
@@ -117,6 +124,12 @@ describe("Game Logic", () => {
             const compressed = compressRow(row);
             expect(compressed).toEqual([2, 2, 4, 0]);
         });
+
+        it("should not move the obstacle tile", () => {
+            const row = [0, 0, OBSTACLE_TILE, 0];
+            const compressed = compressRow(row);
+            expect(compressed).toEqual([0, 0, OBSTACLE_TILE, 0]);
+        });
     });
 
     describe("mergeRow", () => {
@@ -130,6 +143,12 @@ describe("Game Logic", () => {
             const [merged, scoreGain] = mergeRow([4, 4, 4, 0]);
             expect(merged).toEqual([8, 0, 4, 0]);
             expect(scoreGain).toBe(8);
+        });
+
+        it("should not move the obstacle tile", () => {
+            const [merged, scoreGain] = mergeRow([2, 2, OBSTACLE_TILE, 0]);
+            expect(merged).toEqual([4, 0, OBSTACLE_TILE, 0]);
+            expect(scoreGain).toBe(4);
         });
     });
 
@@ -167,6 +186,26 @@ describe("Game Logic", () => {
                     [0, 0, 0, 0],
                     [0, 0, 0, 0],
                     [0, 0, 0, 0],
+                ],
+                4,
+            ]);
+        });
+
+        it("should keep the obstacle and merge valid tiles", () => {
+            const board: (number | 0)[][] = [
+                [2, 2, OBSTACLE_TILE, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 4, 8, 0],
+            ];
+
+            const newBoard = moveLeft(board);
+            expect(newBoard).toEqual([
+                [
+                    [4, 0, OBSTACLE_TILE, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [4, 8, 0, 0],
                 ],
                 4,
             ]);
@@ -320,6 +359,16 @@ describe("Game Logic", () => {
                 [32, 64, 128, 256],
                 [512, 1024, 2048, 4096],
                 [8192, 16384, 32768, 65536],
+            ];
+            expect(canMove(board)).toBe(false);
+        });
+
+        it("should return false if the obstacle tile is present", () => {
+            const board: (number | 0)[][] = [
+                [2, 4, 8, 16],
+                [32, OBSTACLE_TILE, 32, 256],
+                [512, 1024, 2048, 4096],
+                [8192, 16384, 32768, 2],
             ];
             expect(canMove(board)).toBe(false);
         });

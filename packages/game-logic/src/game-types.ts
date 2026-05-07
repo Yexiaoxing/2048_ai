@@ -16,3 +16,5 @@ export type Board = number[][];
 
 // Coordinates in the format [row, col]
 export type Coordinates = [number, number];
+
+export const OBSTACLE_TILE = -2;

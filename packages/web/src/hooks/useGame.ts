@@ -10,22 +10,26 @@ import {
     spawnTile,
 } from "@2048/game-logic";
 import { useCallback, useState } from "react";
+import { useObstacleTileContext } from "../contexts/obstacle-tile-context";
 import { type LeaderboardStorage, loadLeaderboard, onNewScore } from "../utils/leaderboard-storage";
 
 export const useGame = () => {
+    const { isObstacleTileEnabled } = useObstacleTileContext();
     const [score, setScore] = useState(0);
     const [moves, setMoves] = useState(0);
     const [gameStatus, setGameStatus] = useState(GameStatus.playing);
-    const [board, setBoard] = useState<Board>(() => getInitialBoard(getRandomInteger(1, 8)));
+    const [board, setBoard] = useState<Board>(() =>
+        getInitialBoard(getRandomInteger(1, 8), isObstacleTileEnabled),
+    );
 
     const [leaderboard, setLeaderboard] = useState<LeaderboardStorage>(() => loadLeaderboard());
 
     const resetGame = useCallback(() => {
         setScore(0);
         setMoves(0);
-        setBoard(getInitialBoard(getRandomInteger(1, 8)));
+        setBoard(getInitialBoard(getRandomInteger(1, 8), isObstacleTileEnabled));
         setGameStatus(GameStatus.playing);
-    }, []);
+    }, [isObstacleTileEnabled]);
 
     const move = useCallback(
         (direction: Direction) => {

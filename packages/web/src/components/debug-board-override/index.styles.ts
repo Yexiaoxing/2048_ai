@@ -67,3 +67,18 @@ export const ErrorMessage = styled.div`
     font-size: 12px;
     margin-bottom: 12px;
 `;
+
+export const ObstacleToggleContainer = styled.label`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: var(--color-muted-foreground);
+`;
+
+export const ObstacleToggleInput = styled.input`
+    width: 14px;
+    height: 14px;
+`;
