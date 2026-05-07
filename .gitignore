@@ -11,6 +11,7 @@ devenv.local.yaml
 
 # npm
 node_modules
+.pnpm-store/
 
 *storybook.log
 storybook-static
