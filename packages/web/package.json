@@ -9,7 +9,9 @@
         "preview": "vite preview",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
-        "typecheck": "tsc -p tsconfig.json --noEmit"
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "test": "vitest",
+        "test-ci": "vitest --run --coverage"
     },
     "dependencies": {
         "@2048/game-ai": "workspace:*",

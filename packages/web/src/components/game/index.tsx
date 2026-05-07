@@ -25,7 +25,7 @@ import {
 import { getStatusMessage } from "./strings";
 
 export const Game: React.FC = () => {
-    const { score, moves, board, move, gameStatus, resetGame, overrideBoard } = useGame();
+    const { score, moves, board, move, gameStatus, leaderboard, resetGame, overrideBoard } = useGame();
     const { isDebugMode, toggleDebugMode } = useDebugMode();
 
     useGameKeyboardControl((dir) => move(dir));
@@ -43,7 +43,7 @@ export const Game: React.FC = () => {
 
     return (
         <GameContainer>
-            <Header score={score} moves={moves} />
+            <Header score={score} moves={moves} bestScore={leaderboard.scores[0]} />
 
             <div className="game-content">
                 <BoardContainer>

@@ -10,12 +10,15 @@ import {
     spawnTile,
 } from "@2048/game-logic";
 import { useCallback, useState } from "react";
+import { type LeaderboardStorage, loadLeaderboard, onNewScore } from "../utils/leaderboard-storage";
 
 export const useGame = () => {
     const [score, setScore] = useState(0);
     const [moves, setMoves] = useState(0);
     const [gameStatus, setGameStatus] = useState(GameStatus.playing);
     const [board, setBoard] = useState<Board>(() => getInitialBoard(getRandomInteger(1, 8)));
+
+    const [leaderboard, setLeaderboard] = useState<LeaderboardStorage>(() => loadLeaderboard());
 
     const resetGame = useCallback(() => {
         setScore(0);
@@ -34,7 +37,12 @@ export const useGame = () => {
             }
 
             // Calculate score
-            setScore((prevScore) => prevScore + scoreGain);
+            setScore((prevScore) => {
+                const newScore = prevScore + scoreGain;
+                onNewScore(newScore);
+                setLeaderboard(loadLeaderboard());
+                return newScore;
+            });
 
             // Spawn new tile if board changed
             const finalBoard = spawnTile(newBoard);
@@ -60,6 +68,7 @@ export const useGame = () => {
         moves,
         board,
         gameStatus,
+        leaderboard,
 
         resetGame,
         move,

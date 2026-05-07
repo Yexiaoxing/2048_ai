@@ -4,15 +4,17 @@ import { GameHeader, ScoreContainer, StyledHeader } from "./index.styles";
 interface IHeaderProps {
     score: number;
     moves: number;
+    bestScore: number;
 }
 
-export const Header: React.FC<IHeaderProps> = ({ score, moves }) => {
+export const Header: React.FC<IHeaderProps> = ({ score, moves, bestScore }) => {
     return (
         <StyledHeader>
             <GameHeader>2048</GameHeader>
             <ScoreContainer>
                 <ScoreView label="Score" value={score} />
                 <ScoreView label="Moves" value={moves} />
+                <ScoreView label="Best Score" value={bestScore} />
             </ScoreContainer>
         </StyledHeader>
     );
